@@ -20,6 +20,35 @@ interface BookResult {
   held_for_review: { date: string; description: string }[]
   more_to_fetch: boolean
   batch_id: string | null
+  undoable: boolean
+  balances: {
+    name: string
+    bank_balance: number | null
+    adjusted_by?: number
+    start_moved_to?: string
+    start_not_moved?: string
+    not_matched?: string
+  }[]
+}
+
+const money = (n: number) =>
+  n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+/** One line per account whose balance or start date this run touched or couldn't. */
+function balanceLines(r: BookResult): string[] {
+  return r.balances.flatMap((b) => {
+    const out: string[] = []
+    if (b.start_moved_to)
+      out.push(`${b.name}: start moved to ${b.start_moved_to} so past transactions count.`)
+    if (b.start_not_moved) out.push(`${b.name}: start not moved — ${b.start_not_moved}`)
+    if (b.adjusted_by)
+      out.push(
+        `${b.name}: adjusted by ${b.adjusted_by > 0 ? '+' : ''}${money(b.adjusted_by)} to match the bank's ${money(b.bank_balance ?? 0)}.`,
+      )
+    if (b.not_matched)
+      out.push(`${b.name}: balance not matched — ${b.not_matched}. Set it by hand.`)
+    return out
+  })
 }
 
 /** One plain sentence for a fetch-and-book run — what landed and what was left alone. */
@@ -35,7 +64,9 @@ function bookSummary(r: BookResult): string {
   if (r.skipped) parts.push(`${r.skipped} skipped (deleted before, or booked meanwhile).`)
   if (r.pending_skipped) parts.push(`${r.pending_skipped} still pending.`)
   if (r.more_to_fetch) parts.push('There is more — run it again to book the rest.')
-  return parts.join(' ')
+  if (r.batch_id && !r.undoable)
+    parts.push('It also set balances or start dates, so it can’t be undone in one click.')
+  return [parts.join(' '), ...balanceLines(r)].join('\n')
 }
 
 export function FetchAndBook({ provider }: { provider: string }) {
@@ -61,7 +92,7 @@ export function FetchAndBook({ provider }: { provider: string }) {
         setBookMsg({ text: d.detail || 'Could not fetch and book.', bad: true })
       } else {
         setBookMsg({ text: bookSummary(d as BookResult), bad: (d as BookResult).status !== 'ok' })
-        setLastBatch((d as BookResult).batch_id)
+        setLastBatch((d as BookResult).undoable ? (d as BookResult).batch_id : null)
       }
       emitDataChanged(['*'])
     } catch {
@@ -114,11 +145,17 @@ export function FetchAndBook({ provider }: { provider: string }) {
         </Button>
       </div>
       <Text size="xs" tone="faint">
-        Books new posted transactions into linked accounts without Lucius. Anything that looks like
-        a transaction you already have is left for you to check.
+        Books new posted transactions into linked accounts without Lucius, then sets each cash and
+        card account to the bank&apos;s balance. Anything that looks like a transaction you already
+        have is left for you to check.
       </Text>
       {bookMsg && (
-        <Text size="xs" tone={bookMsg.bad ? 'bad' : undefined} role="status">
+        <Text
+          size="xs"
+          tone={bookMsg.bad ? 'bad' : undefined}
+          role="status"
+          style={{ whiteSpace: 'pre-line' }}
+        >
           {bookMsg.text}
         </Text>
       )}

@@ -49,7 +49,10 @@ def _mock(monkeypatch, status=200):
 
     def fake_get(url, params=None, headers=None, timeout=None):
         calls.append({"url": url, "params": params, "headers": headers})
-        body = _TXNS if url.endswith("/transactions") else _ACCOUNTS
+        if url.endswith("/balance"):
+            body = {"balance": {"amount": -42.5, "currency": "GBP"}}
+        else:
+            body = _TXNS if url.endswith("/transactions") else _ACCOUNTS
         return httpx.Response(status, json=body, request=httpx.Request("GET", url))
 
     monkeypatch.setattr(svc.httpx, "get", fake_get)
@@ -83,10 +86,17 @@ def test_fetch_sends_the_key_and_window_and_maps_rows(monkeypatch):
     assert (row["amount"], row["currency"], row["description"]) == (-12.5, "GBP", "Acme Coffee")
 
 
-def test_accounts_only_makes_no_transaction_call(monkeypatch):
+def test_accounts_only_reads_balances_and_no_transactions(monkeypatch):
     calls = _mock(monkeypatch)
     win = svc.fetch_window(_store(), "2026-09-15", "2026-10-15", None, accounts_only=True)
-    assert len(calls) == 1 and win.rows == [] and len(win.accounts) == 1
+    assert [c["url"].rsplit("/v1", 1)[1] for c in calls] == ["/accounts", "/accounts/7/balance"]
+    assert win.rows == [] and win.accounts[0]["balance"] == -42.5
+
+
+def test_a_transaction_fetch_reads_no_balances(monkeypatch):
+    calls = _mock(monkeypatch)
+    svc.fetch_window(_store(), "2026-09-15", "2026-10-15", None)
+    assert not any(c["url"].endswith("/balance") for c in calls)
 
 
 def test_bad_key_is_an_auth_error_and_never_leaks_the_key(monkeypatch):

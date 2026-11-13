@@ -127,3 +127,12 @@ What a model judged is withheld rather than guessed: a row the match engine band
 provider account is counted and skipped; categories stay blank. So the button can only ADD rows
 nothing resembles, never merge, link or edit. Widening it to another connector is adding its key
 to `MANUAL_BOOK` plus a route, deliberately a per-connector decision.
+
+Same day, also owner's decision: a Fetch and book run then matches balances. Each linked
+`cash`/`credit` account has its start moved back to the oldest row the run booked
+(`tracking_start.align_tracking_start`, balance-preserving), then is reconciled to the
+provider's reported balance against its cleared balance (`ledger.reconcile`; booked rows are
+cleared — they posted). The owner chose automatic over a per-account button, accepting that
+an adjustment also absorbs a gap from rows held back as possible duplicates. A card reporting
+a positive balance is skipped (owed vs in-credit unverified). A run that adjusted or moved a
+start is not offered for one-click undo, which rolls back the batch's rows only.

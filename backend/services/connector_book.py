@@ -18,7 +18,7 @@ from datetime import date, timedelta
 from typing import Optional
 
 from backend.core import audit_context, data_events
-from backend.core.errors import ValidationError
+from backend.core.errors import OpenNetWorthError, ValidationError
 from backend.core.user_time import user_today
 from backend.services import connector_fetch, connector_window, ledger, matching
 
@@ -28,6 +28,7 @@ MANUAL_BOOK = frozenset({"lunch_flow_personal"})
 SURFACE = "connector_book"
 _HELD_BANDS = frozenset({"strong", "review"})
 _CHUNK_DAYS = 31
+_MATCH_TYPES = frozenset({"cash", "credit"})
 
 
 def _draft(row: dict) -> dict:
@@ -40,6 +41,7 @@ def _draft(row: dict) -> dict:
         "description": row.get("description") or "",
         "memo": row.get("memo") or "",
         "source": "feed",
+        "cleared": True,  # posted at the bank — what the balance match below diffs against
         "external_refs": row["external_refs"],
         f"{leg}_account_id": row["linked_account_id"],
         f"{leg}_amount": abs(amount),
@@ -84,6 +86,10 @@ def _book_chunk(
         except Exception:  # noqa: BLE001 — the rows are booked; the review queue is extra
             logger.exception("connector_book: dedup review pass failed")
     out["booked"] += len(created)
+    for t in created:
+        acct = t.get("from_account_id") or t.get("to_account_id")
+        if acct and (acct not in out["_oldest"] or t["date"] < out["_oldest"][acct]):
+            out["_oldest"][acct] = t["date"]
     # A ref booked meanwhile, or one you deleted before (never re-added without you).
     out["skipped"] += len(skipped)
     return batch
@@ -108,6 +114,8 @@ def fetch_and_book(provider_key: str, since: Optional[str] = None) -> dict:
         "held_for_review": [],
         "batch_id": None,
         "more_to_fetch": False,  # a window over the row cap: the next run books the rest
+        "balances": [],
+        "_oldest": {},  # account id -> oldest row this run booked into it
     }
     batch = None
     start, end = date.fromisoformat(since_r), date.fromisoformat(before_r)
@@ -130,12 +138,70 @@ def fetch_and_book(provider_key: str, since: Optional[str] = None) -> dict:
             out["more_to_fetch"] |= not fetched["window"]["complete"]
             batch = _book_chunk(provider_key, fetched["transactions"], batch, out)
             start = stop + timedelta(days=1)
+        if out["status"] == "ok":
+            out["balances"] = _align_and_match(provider_key, out["_oldest"])
     finally:
+        out.pop("_oldest", None)
         if batch is not None:
             ledger.import_batches.set_status(
                 batch["id"], "active" if out["booked"] else "rolled_back"
             )
             if out["booked"]:
                 out["batch_id"] = batch["id"]
-                data_events.publish(["*"])
+        if out["booked"] or out["balances"]:
+            data_events.publish(["*"])
+    # Undo rolls back the batch's rows only: a balance adjustment or a moved start would stay
+    # behind and leave the balance wrong, so a run that made either is not offered for undo.
+    out["undoable"] = bool(out["batch_id"]) and not any(
+        n.get("adjusted_by") or n.get("start_moved_to") for n in out["balances"]
+    )
     return out
+
+
+def _align_and_match(provider_key: str, oldest: dict[str, str]) -> list[dict]:
+    """Per linked account: move its start back to the oldest row this run booked (so past rows
+    count, today's balance unchanged), then match its cleared balance to the bank's with one
+    adjustment (owner decision 2026-11-13: auto-match, not a button). Cash and cards only —
+    an investment account's value is its holdings. A card with a POSITIVE bank balance is
+    left alone: whether Lunch Flow means owed or in-credit is unverified, and guessing wrong
+    would flip the debt."""
+    from backend.services import tracking_start
+
+    notes = []
+    for pa in connector_fetch.provider_accounts(provider_key).get("accounts") or []:
+        account_id = pa.get("linked_account_id")
+        acct = ledger.accounts.find_by_id(account_id) if account_id else None
+        if acct is None:
+            continue
+        note: dict = {"account_id": account_id, "name": acct.get("name"), "bank_balance": None}
+        notes.append(note)
+        start = ledger.opening_date(acct, ledger.transactions.all())
+        if oldest.get(account_id) and start and oldest[account_id] < start:
+            try:
+                tracking_start.align_tracking_start(account_id, oldest[account_id])
+                note["start_moved_to"] = oldest[account_id]
+            except OpenNetWorthError as exc:
+                note["start_not_moved"] = exc.message or str(exc)
+        balance = pa.get("balance")
+        note["bank_balance"] = balance
+        if acct.get("type") not in _MATCH_TYPES or balance is None:
+            continue
+        if (pa.get("currency") or "").upper() not in ("", (acct.get("currency") or "").upper()):
+            note["not_matched"] = "the bank reports a different currency"
+            continue
+        if acct.get("type") == "credit" and balance > 0:
+            note["not_matched"] = "a positive card balance may mean owed or in credit"
+            continue
+        token = audit_context.set_audit_scope("user", SURFACE)
+        try:
+            adj = ledger.reconcile(account_id, balance, against="cleared")
+        finally:
+            audit_context.clear_audit_scope(token)
+        note["adjusted_by"] = _signed(adj, account_id) if adj else 0.0
+    return notes
+
+
+def _signed(adj: dict, account_id: str) -> float:
+    if adj.get("to_account_id") == account_id:
+        return float(adj.get("to_amount") or 0)
+    return -float(adj.get("from_amount") or 0)

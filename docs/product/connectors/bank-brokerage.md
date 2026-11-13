@@ -282,7 +282,18 @@ To book without Lucius, open the connector (**Connectors → Lunch Flow Personal
 past transactions, as far back as Lunch Flow holds them). It books new posted transactions
 into the accounts you linked, uncategorized. A transaction that looks like one you already have
 is not booked — the result lists how many, so you can check them yourself or ask Lucius. Accounts
-you haven't linked are skipped. **Undo this run** right after removes everything that run added.
+you haven't linked are skipped.
+
+After booking, each linked cash and card account is set to the balance Lunch Flow reports:
+- If older transactions came in, the account's start date moves back to the oldest one, so they
+  count. Today's balance doesn't change from this step.
+- Then, if your balance still differs from the bank's, one **Balance adjustment** transaction
+  closes the gap. Your balance is compared without pending transactions you entered yourself.
+- A card is left alone when Lunch Flow reports a positive balance, because that can mean money
+  owed or a card in credit; set it by hand. Investment accounts are never adjusted.
+
+**Undo this run** appears right after a run that only added transactions. A run that also
+adjusted a balance or moved a start date can't be undone in one click.
 
 Pending transactions are left out until they post. Investment holdings and balances are not
 imported. As with Lunch Flow, a **Caution:** line after a fetch flags transactions whose
