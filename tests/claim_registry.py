@@ -136,6 +136,7 @@ NOT_A_TOOL: dict[str, str] = {
     "yahoo_finance": "a connector kind id, not a tool",
     "enable_banking": "a connector kind id, not a tool",
     "lunch_flow": "a connector kind id, not a tool",
+    "lunch_flow_personal": "a connector kind id, not a tool",
     "lunch_money": "a connector kind id, not a tool",
     # (`set_aside_base`/`unfunded_card_debt_base` lived here while ADR 2026-09-08's payload keys
     # existed. ADR 2026-09-09 replaced them with `held_in_envelopes`/`card_spend_not_covered`,

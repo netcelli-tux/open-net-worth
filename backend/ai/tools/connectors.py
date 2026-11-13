@@ -358,6 +358,22 @@ async def lunch_flow_get_status(input_data: dict):
 
 
 @tool(
+    "lunch_flow_personal_get_status",
+    description=(
+        "Check the Lunch Flow Personal connector: whether it's configured and enabled, and when "
+        "it was last fetched. Never returns secrets. Configured by the user in the UI "
+        "(Connectors → Lunch Flow Personal), never by you. To pull data, call "
+        "lunch_flow_personal_fetch_transactions. "
+        f"{PROVIDERS['lunch_flow_personal'].note}"
+    ),
+    input_schema=schema_of(_NoArgsInput, tool_name="lunch_flow_personal_get_status"),
+    connector="lunch_flow_personal",
+)
+async def lunch_flow_personal_get_status(input_data: dict):
+    return await _provider_status("lunch_flow_personal")
+
+
+@tool(
     "ynab_get_status",
     description=(
         "Check the YNAB connector: whether it's configured and enabled, and when it was "

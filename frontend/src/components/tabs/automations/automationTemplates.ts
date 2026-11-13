@@ -198,6 +198,17 @@ export const CONNECTOR_SYNC_TEMPLATES: AutomationTemplate[] = [
     permission_mode: 'auto',
   },
   {
+    key: 'sync_lunch_flow_personal',
+    name: 'Sync Lunch Flow Personal',
+    description: 'Fetch new Lunch Flow Personal transactions and book them.',
+    instructions:
+      'Fetch new Lunch Flow Personal transactions and book them using the book-transactions ' +
+      'skill. Message me only when something was booked or something went wrong.',
+    trigger: { kind: 'schedule', type: 'interval', seconds: 21600 },
+    execution: { kind: 'lucius' },
+    permission_mode: 'auto',
+  },
+  {
     key: 'sync_ynab',
     name: 'Sync YNAB',
     description: 'One way: Lucius fetches new YNAB transactions and books them here.',

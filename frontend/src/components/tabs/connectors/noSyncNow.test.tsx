@@ -8,6 +8,10 @@
 // on a connector card: YNAB's scheduled two-way sync has its own "Sync now" under
 // /api/ynab/sync (automations/builtin/YnabSyncDetail.test.tsx). The YNAB card only READS that status for its
 // one-line summary, so for YNAB exactly that one GET is allowed, and no button.
+//
+// A second (owner decision, 2026-11-13): Lunch Flow Personal has "Fetch and book now", which
+// books with no model (services/connector_book.py, ADR 2026-09-05 amendment). It renders only on
+// a click, never on load, and its URL is /fetch-and-book — so the load-time guard below still holds.
 
 import type { JSX } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,6 +20,7 @@ import { PlaidSection } from './PlaidSection'
 import { SimpleFinSection } from './SimpleFinSection'
 import { LunchMoneySection } from './LunchMoneySection'
 import { LunchFlowSection } from './LunchFlowSection'
+import { LunchFlowPersonalSection } from './LunchFlowPersonalSection'
 import { YnabSection } from './YnabSection'
 import { EnableBankingSection } from './EnableBankingSection'
 import { GoCardlessSection } from './GoCardlessSection'
@@ -67,6 +72,14 @@ const STATUS_BY_PATH: Record<string, unknown> = {
     configured: true,
     enabled: true,
     has_access_token: true,
+    last_synced_at: null,
+    last_status: 'ok',
+    last_error: null,
+  },
+  '/api/lunch-flow-personal/status': {
+    configured: true,
+    enabled: true,
+    has_api_key: true,
     last_synced_at: null,
     last_status: 'ok',
     last_error: null,
@@ -182,6 +195,11 @@ const SECTIONS: Array<{
   { name: 'Lunch Money', provider: 'lunch_money', Component: LunchMoneySection },
   { name: 'Lunch Flow', provider: 'lunch_flow', Component: LunchFlowSection },
   {
+    name: 'Lunch Flow Personal',
+    provider: 'lunch_flow_personal',
+    Component: LunchFlowPersonalSection,
+  },
+  {
     name: 'YNAB',
     provider: 'ynab',
     Component: YnabSection,
@@ -221,7 +239,7 @@ describe.each(SECTIONS)(
       // through and the assertion above isn't vacuously true from an early error state).
       expect(
         mockAuthFetch.mock.calls.some(
-          (c) => String(c[0]) === `/api/${provider.replace('_', '-')}/status`,
+          (c) => String(c[0]) === `/api/${provider.replace(/_/g, '-')}/status`,
         ),
       ).toBe(true)
     })

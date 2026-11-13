@@ -129,6 +129,7 @@ const ACCOUNT_CONNECTORS = new Set([
   'enable_banking',
   'simplefin',
   'lunch_flow',
+  'lunch_flow_personal',
   'lunch_money',
   'alpaca',
   'ibkr',

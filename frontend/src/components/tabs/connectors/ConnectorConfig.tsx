@@ -27,6 +27,7 @@ import { SimpleFinSection } from './SimpleFinSection'
 import { PlaidSection } from './PlaidSection'
 import { LunchMoneySection } from './LunchMoneySection'
 import { LunchFlowSection } from './LunchFlowSection'
+import { LunchFlowPersonalSection } from './LunchFlowPersonalSection'
 import { RestSection } from './RestSection'
 import { ActualSection } from './ActualSection'
 import { YnabSection } from './YnabSection'
@@ -54,6 +55,7 @@ const CONFIGURABLE_KINDS = new Set([
   'plaid',
   'lunch_money',
   'lunch_flow',
+  'lunch_flow_personal',
   'ynab',
   'actual_budget',
   'web_search',
@@ -121,6 +123,8 @@ function configForm({
       return <LunchMoneySection />
     case 'lunch_flow':
       return <LunchFlowSection />
+    case 'lunch_flow_personal':
+      return <LunchFlowPersonalSection />
     case 'ynab':
       return <YnabSection />
     case 'actual_budget':

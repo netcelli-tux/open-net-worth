@@ -226,6 +226,15 @@ PROVIDERS: dict[str, Provider] = {
             _store=("backend.db.lunch_flow_config_store", "LunchFlowConfigStore"),
         ),
         Provider(
+            key="lunch_flow_personal",
+            label=CATALOG["lunch_flow_personal"].label,
+            note="Your own Lunch Flow accounts through the Personal API; one API key.",
+            lookback_days=14,
+            _fetch=("backend.services.aggregation.lunch_flow_personal", "fetch_window"),
+            _classify=("backend.services.aggregation.lunch_flow_personal", "classify_error"),
+            _store=("backend.db", "LunchFlowPersonalConfigStore"),
+        ),
+        Provider(
             key="ynab",
             label=CATALOG["ynab"].label,
             note="A personal token; it may see several plans — name one with plan_id (ynab_list_plans).",

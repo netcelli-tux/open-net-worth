@@ -283,7 +283,10 @@ def test_total_tool_schemas_size_under_budget(tool_schemas):
     # says a 'total' account's balance is its untracked part, not cash; update_accounts takes
     # value_source; reconcile_accounts takes real_total; acquire_lots says not to ask for funding.
     # ~1.1K chars after trimming (create_account's value_source dropped — update_accounts sets it).
-    budget = 480_000
+    # 2026-11-13: 480_000 -> 484_000. Lunch Flow Personal API connector: its three
+    # connector-scoped tools (get_status / fetch_transactions / list_accounts), ~3.5K chars, the
+    # same shape as GoCardless's three. Not CORE, so the default offer is unchanged.
+    budget = 484_000
     assert total < budget, (
         f"TOOL_SCHEMAS json.dumps size is {total:,} chars — over the {budget:,}-char budget. "
         "Shorten a tool description or raise the budget intentionally (with a comment)."

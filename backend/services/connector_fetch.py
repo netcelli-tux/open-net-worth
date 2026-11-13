@@ -316,6 +316,7 @@ def fetch(
     limit: int = _DEFAULT_LIMIT,
     offset: int = 0,
     plan_id: Optional[str] = None,
+    max_limit: int = _HARD_MAX_LIMIT,
 ) -> dict:
     """Fetch + normalize + stash + link + filter one provider's window (RFC §A). ``plan_id``
     is YNAB's only: which plan to read (omitted = the saved or only one). NEVER
@@ -329,7 +330,9 @@ def fetch(
     since_resolved, before_resolved, window_warning = connector_window.default_window(
         provider, since, before
     )
-    limit = max(1, min(_HARD_MAX_LIMIT, int(limit or _DEFAULT_LIMIT)))
+    # ``max_limit`` lets a non-model caller (connector_book) take a whole window; the default
+    # bound exists for a model's context, and no tool passes it.
+    limit = max(1, min(max_limit, int(limit or _DEFAULT_LIMIT)))
     offset = max(0, int(offset or 0))
 
     # ── step 1: dormant gate ────────────────────────────────────────────────────────────
