@@ -108,11 +108,13 @@ Once Codex is signed in, the picker fetches Codex's list of models by itself and
 app's data volume. A model that needs a newer Codex release arrives when you
 [update the image](../operations/upgrading.md#update-for-your-install).
 
-With the current `docker-compose.yml`, the sign-in stays in its own Docker volume
-(`open-net-worth-codex`, `open-net-worth-claude`), so updates keep it. With an older file or a
-plain `docker run`, it is lost whenever the container is recreated: [download the new
-file](../operations/upgrading.md#docker), or mount your own volumes at `/home/onw/.codex` and
-`/home/onw/.claude`. These volumes hold your sign-in and aren't part of the app's backups.
+With the current `docker-compose.yml`, the sign-in stays in Docker volumes
+(`open-net-worth-home`, `open-net-worth-codex`, `open-net-worth-claude`), so updates keep it.
+`open-net-worth-home` matters for Claude Code: it keeps `~/.claude.json`, which sits outside
+`~/.claude`, and without it Claude Code asks you to sign in again after every update. With an
+older file or a plain `docker run`, the sign-in is lost whenever the container is recreated:
+[download the new file](../operations/upgrading.md#docker), or mount your own volume at
+`/home/onw`. These volumes hold your sign-in and aren't part of the app's backups.
 
 **Or share a sign-in from the host:**
 
