@@ -276,7 +276,8 @@ sign-in window. Link your banks inside Lunch Flow first.
 3. Paste it into **API key** and click **Save**.
 4. Link the accounts in the **Accounts** list.
 
-To book without Lucius, reopen the form and click **Fetch and book now** (optionally pick a
+To book without Lucius, open the connector (**Connectors → Lunch Flow Personal**) and, in
+**Next: bring in transactions** below your linked accounts, click **Fetch and book now** (optionally pick a
 **Fetch from** date first; blank fetches the last two weeks — pick an earlier date to import
 past transactions, as far back as Lunch Flow holds them). It books new posted transactions
 into the accounts you linked, uncategorized. A transaction that looks like one you already have

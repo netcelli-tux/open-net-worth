@@ -4,6 +4,7 @@
 import { useRouter } from '@tanstack/react-router'
 import { Button, Text } from '../../ui'
 import { ALL_TEMPLATES, templateKeyForConnector } from '../automations/automationTemplates'
+import { FetchAndBook, MANUAL_BOOK } from './FetchAndBook'
 
 /** "every 6 hours" / "every hour" — the template's own interval, so the copy can't drift. */
 function cadence(templateKey: string | null): string | null {
@@ -62,6 +63,7 @@ export function ConnectorNextStep({
           Or ask Lucius now: “Fetch my {providerLabel} transactions.”
         </Text>
       </div>
+      {MANUAL_BOOK.has(provider) && <FetchAndBook provider={provider} />}
     </>
   )
   if (bare) return <div className="conn-next-body">{body}</div>
