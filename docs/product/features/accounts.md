@@ -265,7 +265,7 @@ of the edit, or not at all.
 
 ## Import a statement or connect a bank
 
-- **Import** (in the account header) reads a CSV, OFX, QIF, PDF or similar statement file — see
+- **Import** (in the account header’s **⋯** menu) reads a CSV, OFX, QIF, PDF or similar statement file — see
   [Importing](importing.md).
 - On a credit card, the due-date banner offers **Import statement** so the exact statement
   figures replace the estimate.

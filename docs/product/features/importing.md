@@ -25,7 +25,7 @@ PDF also needs a model that can read images. OFX, QIF, MT940 and CAMT files are 
 ## Import a statement
 
 1. Open **Accounts** and pick the account the statement belongs to.
-2. Click **Import** in the account's header (on a narrow screen it's under the **⋯** menu). On a
+2. Open the **⋯** menu in the account's header and choose **Import**. On a
    credit card you can also use **Import statement** on the due-date banner.
 3. Drop the file onto **Drop a statement here, or browse**, or click it to choose the file. For a
    file hosted online (a published Google Sheet, say), click **or paste a URL / Google Sheet

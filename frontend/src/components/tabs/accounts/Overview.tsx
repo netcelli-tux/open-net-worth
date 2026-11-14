@@ -23,7 +23,7 @@ import {
 } from '../../../ui/icons'
 import type { AccountGroup } from './types'
 import { fCur } from './data'
-import { ReviewStrip, TxnCount } from './ReviewStrip'
+import { ReviewStrip } from './ReviewStrip'
 
 type OverviewMenuIcon =
   | 'payees'
@@ -189,27 +189,6 @@ export function Overview({
           </div>
         </div>
         <div className="acct-head-actions">
-          <Button
-            className="acct-head-collapsible"
-            size="sm"
-            variant="ghost"
-            onClick={onManagePayees}
-          >
-            Manage payees
-          </Button>
-          {/* Beside Manage payees, its natural sibling — both are ledger-entity admin, and both
-              are used well outside the screen that happens to host them. */}
-          <Button
-            className="acct-head-collapsible"
-            size="sm"
-            variant="ghost"
-            onClick={onManageCategories}
-          >
-            Manage categories
-          </Button>
-          <Button className="acct-head-collapsible" size="sm" variant="ghost" onClick={onImport}>
-            Import
-          </Button>
           <Button size="sm" variant="secondary" onClick={onAdd} data-tour="setup-accounts">
             <span className="acct-btn-ico">
               <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add account
@@ -225,10 +204,8 @@ export function Overview({
             </button>
             {menuOpen && (
               <div className="acct-menu">
-                {/* Folded in from the header row on narrow widths (see accounts.css) */}
                 <OverviewMenuItem
                   icon="payees"
-                  className="acct-menu-collapsible"
                   onClick={() => {
                     setMenuOpen(false)
                     onManagePayees()
@@ -238,7 +215,6 @@ export function Overview({
                 </OverviewMenuItem>
                 <OverviewMenuItem
                   icon="categories"
-                  className="acct-menu-collapsible"
                   onClick={() => {
                     setMenuOpen(false)
                     onManageCategories()
@@ -259,7 +235,6 @@ export function Overview({
                 )}
                 <OverviewMenuItem
                   icon="import"
-                  className="acct-menu-collapsible"
                   onClick={() => {
                     setMenuOpen(false)
                     onImport()
@@ -349,15 +324,13 @@ export function Overview({
             </div>
           </div>
 
-          {/* Always rendered, even at 0 txns, so the card's height doesn't shift. Beside the
-              figures on a wide screen (there is no reconcile status to share its row). */}
-          <div className="acct-recon-line">
-            <span className="acct-recon-grow" />
-            <span className="acct-recon-group acct-recon-group--review">
-              <ReviewStrip count={stats.review} onReview={onReview} onStartReview={onStartReview} />
-              <TxnCount count={stats.count} />
-            </span>
-          </div>
+          {stats.review > 0 && (
+            <div className="acct-recon-line">
+              <span className="acct-recon-group acct-recon-group--review">
+                <ReviewStrip count={stats.review} onReview={onReview} onStartReview={onStartReview} />
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </>

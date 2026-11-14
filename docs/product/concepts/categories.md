@@ -24,8 +24,8 @@ groups:
 - **Needs** — Groceries, Medical expenses, Emergency fund
 - **Wants** — Subscriptions, Dining out, Entertainment, Vacation, Stuff I forgot to plan for
 
-Rename, delete or add to them freely in **Manage categories** (from the Accounts header, or the
-**⋯** menu on **Plan › Budget**). See [Categories and payees](../features/categories-payees.md)
+Rename, delete or add to them freely in **Manage categories** (from the **⋯** menu on the Accounts header
+or on **Plan › Budget**). See [Categories and payees](../features/categories-payees.md)
 for the steps.
 
 Each category has a **kind** — Expense, Inflow (income), Transfer or Investment — so income

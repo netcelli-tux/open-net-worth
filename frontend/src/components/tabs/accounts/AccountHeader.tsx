@@ -34,7 +34,7 @@ import {
 } from '../../../ui/icons'
 import type { Account, LinkStatus } from './types'
 import { fCur } from './data'
-import { ReviewStrip, TxnCount } from './ReviewStrip'
+import { ReviewStrip } from './ReviewStrip'
 import { AccountValueCard, AccountValueFooter, AccountValueNotice } from './AccountValuePanels'
 import { isWaiting } from './valuation'
 import { typeLabel } from './categories'
@@ -506,25 +506,6 @@ export function AccountHeader({
         </div>
 
         <div className="acct-head-actions">
-          <Button
-            className="acct-head-collapsible"
-            size="sm"
-            variant="ghost"
-            onClick={onManagePayees}
-          >
-            Manage payees
-          </Button>
-          <Button
-            className="acct-head-collapsible"
-            size="sm"
-            variant="ghost"
-            onClick={onManageCategories}
-          >
-            Manage categories
-          </Button>
-          <Button className="acct-head-collapsible" size="sm" variant="ghost" onClick={onImport}>
-            Import
-          </Button>
           <div className="acct-menu-wrap" ref={menuRef}>
             <button
               className="btn-ghost-icon"
@@ -535,10 +516,8 @@ export function AccountHeader({
             </button>
             {menuOpen && (
               <div className="acct-menu">
-                {/* Folded in from the header row on narrow widths (see accounts.css) */}
                 <AccountMenuItem
                   icon="payees"
-                  className="acct-menu-collapsible"
                   onClick={() => {
                     setMenuOpen(false)
                     onManagePayees()
@@ -548,7 +527,6 @@ export function AccountHeader({
                 </AccountMenuItem>
                 <AccountMenuItem
                   icon="categories"
-                  className="acct-menu-collapsible"
                   onClick={() => {
                     setMenuOpen(false)
                     onManageCategories()
@@ -558,7 +536,6 @@ export function AccountHeader({
                 </AccountMenuItem>
                 <AccountMenuItem
                   icon="import"
-                  className="acct-menu-collapsible"
                   onClick={() => {
                     setMenuOpen(false)
                     onImport()
@@ -573,7 +550,7 @@ export function AccountHeader({
                     Manage institutions
                   </AccountMenuItem>
                 )}
-                <div className={onManageInstitutions ? 'sep' : 'acct-menu-collapsible sep'} />
+                <div className="sep" />
                 <AccountMenuItem
                   icon="statements"
                   onClick={() => {
@@ -964,7 +941,6 @@ export function AccountHeader({
                 <ReconcilePopover account={account} onReconcile={onReconcile} />
               </span>
             )}
-            {/* Gated on `stats` existing, never on count, so the line doesn't disappear at 0 txns. */}
             {stats && (
               <>
                 <span className="acct-recon-grow" />
@@ -974,7 +950,6 @@ export function AccountHeader({
                     onReview={onReview}
                     onStartReview={onStartReview}
                   />
-                  <TxnCount count={stats.count} />
                 </span>
               </>
             )}
