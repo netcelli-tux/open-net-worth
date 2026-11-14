@@ -368,6 +368,23 @@ export const CATALOG: CatalogEntry[] = [
     tools: ['get_connector_status', 'connector_sync'],
   },
   {
+    id: 'lunch_flow_personal',
+    name: 'Lunch Flow Personal',
+    families: ['Data source'],
+    categories: ['Banking'],
+    icon: 'accounts',
+    hue: 'var(--good)',
+    // sub/desc: read live from `_SHORT_DESC`/`_LONG_DESC["lunch_flow_personal"]`.
+    publisher: 'Lunch Flow',
+    verification: 'unverified',
+    homepageUrl: 'https://www.lunchflow.app/docs/api/personal-api-overview',
+    supportUrl: 'https://discord.gg/TJn5mMV4jZ',
+    privacyUrl: 'https://www.lunchflow.app/docs/guides/account/security-privacy',
+    mcp: false,
+    popular: false,
+    tools: ['get_connector_status', 'connector_sync'],
+  },
+  {
     id: 'ynab',
     name: 'YNAB',
     families: ['Data source'],

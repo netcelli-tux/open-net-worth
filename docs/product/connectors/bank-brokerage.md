@@ -1,12 +1,12 @@
 ---
 title: Bank & brokerage connectors
-description: Set up SimpleFIN, Plaid, Enable Banking, GoCardless, Lunch Flow, Lunch Money or YNAB so Lucius can fetch and book your transactions.
+description: Set up SimpleFIN, Plaid, Enable Banking, GoCardless, Lunch Flow, Lunch Flow Personal, Lunch Money or YNAB so Lucius can fetch and book your transactions.
 category: connectors
 order: 60
 audience: [user]
 status: beta
 related: [lucius/automations, lucius/overview, features/importing, features/bank-data-sync, getting-started/what-is-open-net-worth]
-keywords: [plaid, simplefin, enable banking, gocardless, nordigen, lunch flow, lunch money, ynab, alpaca, interactive brokers, ibkr flex retired, bank sync, brokerage sync, setup, sync template, last fetched]
+keywords: [plaid, simplefin, enable banking, gocardless, nordigen, lunch flow, lunch flow personal api, lunch money, ynab, alpaca, interactive brokers, ibkr flex retired, bank sync, brokerage sync, setup, sync template, last fetched]
 ---
 
 # Bank & brokerage connectors
@@ -29,7 +29,7 @@ place a trade.
 | A US or Canadian bank or card | **SimpleFIN** (easiest) or **Plaid** | SimpleFIN: a paid SimpleFIN Bridge account (about $15/year). Plaid: a Plaid developer account. |
 | A bank in the EU or UK | **Enable Banking** | An Enable Banking application (ID + private key). |
 | A bank in the EU or UK, and an existing GoCardless Bank Account Data account | **GoCardless** | A secret ID and secret key from GoCardless. GoCardless no longer accepts new signups. |
-| Banks in other countries | **Lunch Flow** | A Lunch Flow developer client ID and secret. |
+| Banks in other countries | **Lunch Flow Personal** (easiest) or **Lunch Flow** | Lunch Flow Personal: an API key from your Lunch Flow dashboard. Lunch Flow: a developer client ID and secret (Platform API, restricted access). |
 | Spending already tracked in Lunch Money | **Lunch Money** | A Lunch Money access token. |
 | Spending already tracked in YNAB | **YNAB** | A YNAB personal access token. |
 | An Alpaca brokerage account | **Alpaca MCP** (a server run on this machine, under **Browse & add → MCP**) | An Alpaca API key pair. See [External MCP servers](external-mcp.md). |
@@ -291,6 +291,23 @@ Sign-in only works when you reach Open Net Worth over HTTPS or on the machine it
 If the form shows a **Caution:** line after a fetch, read it: it flags transactions whose
 money-in/money-out direction looked uncertain.
 
+## Lunch Flow Personal
+
+Your own Lunch Flow accounts through its Personal API — one API key, no developer app and no
+sign-in window. Link your banks inside Lunch Flow first.
+
+1. In your Lunch Flow dashboard, create an **API destination** and copy its **API key**.
+2. In Open Net Worth: **Connectors → Browse & add → Lunch Flow Personal → Add connector**.
+3. Paste it into **API key** and click **Save**.
+4. Link the accounts in the **Accounts** list.
+
+To book without Lucius, use [Bank sync without AI](../features/bank-data-sync.md): on the
+connector's page, click **Set up sync** on its **Sync** line. The first sync brings in the history
+Lunch Flow holds (up to two years), then new transactions every 6 hours.
+
+Investment holdings are not imported. As with Lunch Flow, a **Caution:** line after a fetch flags transactions whose
+money-in/money-out direction looked uncertain.
+
 ## Lunch Money
 
 If you already track spending in Lunch Money, its transactions can flow in from here.
@@ -457,7 +474,7 @@ remove it, but it is no longer supported — use one of the connectors above ins
 
 ## Turning on automatic syncing
 
-**Without AI (experimental):** GoCardless, Enable Banking and Plaid can book their transactions
+**Without AI (experimental):** GoCardless, Enable Banking, Plaid and Lunch Flow Personal can book their transactions
 by fixed rules, with no AI — click **Set up sync** under **Sync** on the connector's page.
 See [Bank sync without AI](../features/bank-data-sync.md). The rest of this section is the
 Lucius way.
@@ -469,7 +486,7 @@ edit; click **Create automation** to switch it on. You'll find the same drafts u
 
 | Connector | Default schedule |
 |---|---|
-| SimpleFIN, Plaid, Lunch Money, Lunch Flow, YNAB | Every 6 hours |
+| SimpleFIN, Plaid, Lunch Money, Lunch Flow, Lunch Flow Personal, YNAB | Every 6 hours |
 | GoCardless, Enable Banking | Every 12 hours (banks limit reads per day) |
 
 The schedule and the wording are yours to change. Each run:
@@ -550,7 +567,7 @@ provider too if you no longer need it.
 - Enable Banking is the newest connector here and the least tested against real banks.
 - A linked investment account's total (experimental **Brokerage total**) comes from the
   connector's account list, not from transactions. Plaid, SimpleFIN, Yodlee, Alpaca, YNAB and
-  Enable Banking report one; GoCardless, Lunch Flow and Lunch Money don't, so their investment
+  Enable Banking report one; GoCardless, Lunch Flow, Lunch Flow Personal and Lunch Money don't, so their investment
   accounts stay as you enter them. It's only as fresh as the connector — about a day for Plaid.
 
 ## Troubleshooting

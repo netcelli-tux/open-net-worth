@@ -43,13 +43,19 @@ services:
       # only while none is stored yet; change it later in Settings → Security.
       AUTH_PASSWORD: ${AUTH_PASSWORD:?AUTH_PASSWORD is required for a Docker install - run AUTH_PASSWORD=<your password> docker compose up -d, or put it in a .env file next to docker-compose.yml}
     volumes:
+      # The home folder, so an AI CLI's sign-in survives an update that recreates the container:
+      # Claude Code keeps its account file at ~/.claude.json, OUTSIDE ~/.claude — without this
+      # it asks you to sign in again after every update. The CLIs are installed under /usr/local,
+      # so image updates still apply. The volumes below mount inside it and keep their own data.
+      - onw-home:/home/onw
       - onw-data:/home/onw/.open-net-worth
       # The Claude Code / Codex / OpenCode CLI providers (Settings → AI) run inside this
       # container's OWN filesystem, so they start with NO login — your host's
       # subscription auth doesn't cross the container boundary on its own. Sign in inside
       # the container (Settings → AI shows the command), for example:
       #   docker exec -it open-net-worth codex login --device-auth
-      # These three volumes keep that sign-in when an update recreates the container.
+      # These three volumes (and onw-home above) keep that sign-in when an update recreates
+      # the container.
       - onw-codex:/home/onw/.codex
       - onw-claude:/home/onw/.claude
       - onw-opencode:/home/onw/.local/share/opencode
@@ -79,6 +85,8 @@ services:
     restart: unless-stopped
 
 volumes:
+  onw-home:
+    name: open-net-worth-home
   onw-data:
     name: open-net-worth-data
   onw-codex:

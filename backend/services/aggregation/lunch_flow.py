@@ -202,7 +202,9 @@ def _txn_payee(lf_txn: dict) -> str | None:
     return name[:120] or None
 
 
-def _txn_to_row(lf_txn: dict, account_id: str, currency_hint: str) -> dict | None:
+def _txn_to_row(
+    lf_txn: dict, account_id: str, currency_hint: str, source: str = EXTERNAL_SOURCE
+) -> dict | None:
     """One Lunch Flow transaction → the common normalized row shape (RFC §A step 3).
 
     UNVERIFIED SIGN CONVENTION — see the module docstring for the pointer. Lunch Flow's
@@ -227,7 +229,7 @@ def _txn_to_row(lf_txn: dict, account_id: str, currency_hint: str) -> dict | Non
         else derived_ref(account_id, date_str, amount, currency, _ref_text(lf_txn))
     )
     return {
-        "external_refs": [{"source": EXTERNAL_SOURCE, "ref": ref}],
+        "external_refs": [{"source": source, "ref": ref}],
         "raw": lf_txn,
         "provider_account_id": account_id,
         "date": date_str,

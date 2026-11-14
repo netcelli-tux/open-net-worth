@@ -51,6 +51,7 @@ _FETCH_TOOL_NAMES = frozenset(
         "plaid_fetch_transactions",
         "lunch_money_fetch_transactions",
         "lunch_flow_fetch_transactions",
+        "lunch_flow_personal_fetch_transactions",
         "ynab_fetch_transactions",
         "enable_banking_fetch_transactions",
         "gocardless_fetch_transactions",

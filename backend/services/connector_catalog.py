@@ -593,6 +593,12 @@ _KINDS: tuple[ConnectorKind, ...] = (
         remove=_remove_lunch_flow,
     ),
     _kind(
+        "lunch_flow_personal",
+        "Lunch Flow Personal",
+        _needs(secrets=("api_key",)),
+        secret_fields=_secrets("api_key"),
+    ),
+    _kind(
         "ynab",
         "YNAB",
         _needs(secrets=("access_token",)),

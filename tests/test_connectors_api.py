@@ -46,6 +46,7 @@ def test_list_has_builtins_never_500(client):
         "plaid",
         "lunch_money",
         "lunch_flow",
+        "lunch_flow_personal",
         "ynab",
         "enable_banking",
         "gocardless",

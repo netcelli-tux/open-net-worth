@@ -17,6 +17,7 @@ def test_catalog_lists_every_kind_the_migration_creates():
         "plaid",
         "lunch_money",
         "lunch_flow",
+        "lunch_flow_personal",
         "ynab",
         "actual_budget",
         "enable_banking",

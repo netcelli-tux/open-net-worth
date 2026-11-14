@@ -16,6 +16,7 @@ import { PlaidSection } from './PlaidSection'
 import { SimpleFinSection } from './SimpleFinSection'
 import { LunchMoneySection } from './LunchMoneySection'
 import { LunchFlowSection } from './LunchFlowSection'
+import { LunchFlowPersonalSection } from './LunchFlowPersonalSection'
 import { YnabSection } from './YnabSection'
 import { EnableBankingSection } from './EnableBankingSection'
 import { GoCardlessSection } from './GoCardlessSection'
@@ -67,6 +68,14 @@ const STATUS_BY_PATH: Record<string, unknown> = {
     configured: true,
     enabled: true,
     has_access_token: true,
+    last_synced_at: null,
+    last_status: 'ok',
+    last_error: null,
+  },
+  '/api/lunch-flow-personal/status': {
+    configured: true,
+    enabled: true,
+    has_api_key: true,
     last_synced_at: null,
     last_status: 'ok',
     last_error: null,
@@ -182,6 +191,11 @@ const SECTIONS: Array<{
   { name: 'Lunch Money', provider: 'lunch_money', Component: LunchMoneySection },
   { name: 'Lunch Flow', provider: 'lunch_flow', Component: LunchFlowSection },
   {
+    name: 'Lunch Flow Personal',
+    provider: 'lunch_flow_personal',
+    Component: LunchFlowPersonalSection,
+  },
+  {
     name: 'YNAB',
     provider: 'ynab',
     Component: YnabSection,
@@ -221,7 +235,7 @@ describe.each(SECTIONS)(
       // through and the assertion above isn't vacuously true from an early error state).
       expect(
         mockAuthFetch.mock.calls.some(
-          (c) => String(c[0]) === `/api/${provider.replace('_', '-')}/status`,
+          (c) => String(c[0]) === `/api/${provider.replace(/_/g, '-')}/status`,
         ),
       ).toBe(true)
     })

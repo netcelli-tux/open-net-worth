@@ -6,7 +6,7 @@ order: 172
 audience: [user]
 status: beta
 related: [connectors/bank-brokerage, lucius/automations, features/categories-payees, features/accounts]
-keywords: [bank sync, sync without ai, no ai, data sync, gocardless, enable banking, plaid, history, 90 days, starting balance, review, changed transaction, withdrawn transaction, duplicate, read limit, rate limited, sync now, payee default, merchant category code, mcc]
+keywords: [bank sync, lunch flow personal, sync without ai, no ai, data sync, gocardless, enable banking, plaid, history, 90 days, starting balance, review, changed transaction, withdrawn transaction, duplicate, read limit, rate limited, sync now, payee default, merchant category code, mcc]
 ---
 
 # Bank sync without AI
@@ -20,11 +20,11 @@ what's new.
 > (**Bank sync without AI**). Until then, only a Lucius Automation books bank transactions, as
 > before.
 
-It works with **GoCardless**, **Enable Banking** and **Plaid**.
+It works with **GoCardless**, **Enable Banking**, **Plaid** and **Lunch Flow Personal**.
 
 ## Turn it on
 
-1. Open **Automations → Data Sync**. GoCardless, Enable Banking and Plaid are there beside YNAB
+1. Open **Automations → Data Sync**. GoCardless, Enable Banking, Plaid and Lunch Flow Personal are there beside YNAB
    and Actual: under **Add a data sync** until their connector is set up, then as a card. Or, on a
    connector's page, click **Set up sync** on its **Sync** line.
 2. The bank's own page walks you through it. A bank not connected yet starts with **Connect

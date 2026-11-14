@@ -38,6 +38,7 @@ export const LOGO_FILES: Record<string, string> = {
   // Not vendor-sourced — a placeholder pending a real lunchmoney.app asset. See SOURCES.md.
   lunch_money: 'lunch_money.png',
   lunch_flow: 'lunch_flow.svg',
+  lunch_flow_personal: 'lunch_flow_personal.svg',
   ynab: 'ynab.png',
   actual_budget: 'actual_budget.png',
   alpaca: 'alpaca.png',
