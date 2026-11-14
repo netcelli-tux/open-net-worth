@@ -150,7 +150,7 @@ describe('AccountsTab — transaction review mode', () => {
       url === BOOK_REVIEW_KEY ? new Promise(() => {}) : answer(url, init),
     )
     renderTab()
-    expect(await screen.findByText('1 to review')).toBeTruthy()
+    expect(await screen.findByRole('button', { name: '1 to review' })).toBeTruthy()
   })
 
   it('leaves that key in the shape the Dashboard reads', async () => {

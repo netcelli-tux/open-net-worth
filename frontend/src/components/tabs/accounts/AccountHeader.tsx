@@ -18,8 +18,6 @@ import { Spark } from '../../../lucius/identity'
 import {
   Archive,
   ChevronRight,
-  CircleCheck,
-  ClockAlert,
   Download,
   FileText,
   Landmark,
@@ -34,12 +32,10 @@ import {
 } from '../../../ui/icons'
 import type { Account, LinkStatus } from './types'
 import { fCur } from './data'
-import { ReviewStrip } from './ReviewStrip'
 import { AccountValueCard, AccountValueFooter, AccountValueNotice } from './AccountValuePanels'
 import { isWaiting } from './valuation'
 import { typeLabel } from './categories'
 import { fDate } from '../../../utils/format'
-import { daysSinceReconcile, isReconcileOverdue } from './reconcileCadence'
 
 type MenuIconName =
   | 'payees'
@@ -157,13 +153,6 @@ export interface DueInfo {
   missingCloseDate?: string | null
 }
 
-// ── Account stats footer ──────────────────────────────────────────────────────
-
-export interface AccountStats {
-  count: number
-  review: number
-}
-
 // ── Reconcile Popover ─────────────────────────────────────────────────────────
 
 interface ReconcilePopoverProps {
@@ -174,16 +163,19 @@ interface ReconcilePopoverProps {
   figure?: number
   askNote?: string
   inputNote?: string
+  /** The trigger's content; defaults to the word. */
+  trigger?: ReactNode
 }
 
-/** Lives on the "Reconciled …" line under the balance — the action beside the status it
- *  changes, at every width (owner, 2026-10-26), instead of a header button + ⋯ menu entry. */
-function ReconcilePopover({
+/** The action beside the status it changes, at every width (owner, 2026-10-26), instead of a
+ *  header button + ⋯ menu entry: on the value footer, or in the register toolbar (ReconcileStatus). */
+export function ReconcilePopover({
   account,
   onReconcile,
   figure,
   askNote,
   inputNote,
+  trigger = 'Reconcile',
 }: ReconcilePopoverProps) {
   const asked = figure ?? account.clearedBalance
   const [open, setOpen] = useState(false)
@@ -224,10 +216,11 @@ function ReconcilePopover({
       <button
         type="button"
         className="acct-recon-action as-btn"
+        aria-label="Reconcile"
         aria-expanded={open}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        Reconcile
+        {trigger}
       </button>
 
       {open && (
@@ -310,7 +303,6 @@ function ReconcilePopover({
 export interface AccountHeaderProps {
   account: Account
   dueInfo: DueInfo | null
-  stats: AccountStats | null
   menuOpen: boolean
   setMenuOpen: (open: boolean | ((prev: boolean) => boolean)) => void
   collapsed: boolean
@@ -333,14 +325,10 @@ export interface AccountHeaderProps {
    *  straight at the review step, no re-upload. */
   onReviewStatement?: (statementId: string, filename?: string, uploadedAt?: string) => void
   onExport: () => void
-  /** Called with (account, realBalance) — orchestrator wires to hook's reconcile */
-  onReconcile: (account: Account, realBalance: number) => void
   /** A Brokerage total account's reconcile: (account, its real total, native currency). */
   onReconcileTotal?: (account: Account, realTotal: number) => void
   /** The user's answer to a connector total held back as suspicious. */
   onConfirmHeldTotal?: (account: Account, accept: boolean) => void
-  onReview: () => void
-  onStartReview: () => void
 }
 
 // ── AccountHeader ─────────────────────────────────────────────────────────────
@@ -352,10 +340,16 @@ const LINK_TITLE: Record<LinkStatus, (label: string) => string> = {
     `${label} was removed — nothing syncs into this account. Tap to set it up again.`,
 }
 
+/** A Brokerage total account reconciles its total on the value footer; every other account
+ *  reconciles from the register toolbar. */
+export function hasTotalFooter(account: Account): boolean {
+  const v = account.valuation ?? null
+  return !!v && v.source === 'total' && (!!v.sync || account.holdingsBase > 0)
+}
+
 export function AccountHeader({
   account,
   dueInfo,
-  stats,
   menuOpen,
   setMenuOpen,
   collapsed,
@@ -372,11 +366,8 @@ export function AccountHeader({
   onAskLucius,
   onReviewStatement,
   onExport,
-  onReconcile,
   onReconcileTotal,
   onConfirmHeldTotal,
-  onReview,
-  onStartReview,
 }: AccountHeaderProps) {
   const chatComposer = useChatComposerOptional()
   // The connectors this account is linked to (server-derived label + state), one per connector.
@@ -399,7 +390,7 @@ export function AccountHeader({
   const valuation = account.valuation ?? null
   const valueCard =
     !!valuation && ((valuation.source === 'total' && !!valuation.sync) || account.holdingsBase > 0)
-  const totalFooter = valueCard && valuation?.source === 'total'
+  const totalFooter = hasTotalFooter(account)
   // Adding holdings is a conversation (tickers, quantities, a statement to read), so Lucius takes
   // it: the request is pre-filled and the dock opens, but nothing is sent until the user does.
   const askAddHolding = () => {
@@ -850,7 +841,7 @@ export function AccountHeader({
 
       {/* ── balance card ────────────────────────────────────────────────────── */}
       <div className="acct-bal">
-        <div className="acct-bal-card">
+        <div className={'acct-bal-card' + (valueCard ? '' : ' acct-bal-card--centred')}>
           {valueCard ? (
             <AccountValueCard account={account} onAddHolding={askAddHolding} onSwitch={onEdit} />
           ) : (
@@ -888,9 +879,8 @@ export function AccountHeader({
             </>
           )}
 
-          {/* reconcile line + stats */}
-          <div className="acct-recon-line">
-            {totalFooter && valuation && (
+          {totalFooter && valuation && (
+            <div className="acct-recon-line">
               <span className="acct-recon-group">
                 <AccountValueFooter account={account} />
                 {!isWaiting(valuation) && valuation.totalNative != null && (
@@ -911,49 +901,8 @@ export function AccountHeader({
                   />
                 )}
               </span>
-            )}
-            {!totalFooter && (
-              <span className="acct-recon-group">
-                <span className="acct-recon-stat">
-                  {account.lastReconciled && isReconcileOverdue(account.lastReconciled) ? (
-                    <span
-                      className="acct-recon-stat"
-                      title="Reconcile at least once a month, so a gap is still easy to trace."
-                    >
-                      <ClockAlert size={14} className="warn" aria-hidden="true" />
-                      Reconciled {fDate(account.lastReconciled, 'numeric', 'auto')}{' '}
-                      <span className="warn">
-                        ({daysSinceReconcile(account.lastReconciled)} days ago)
-                      </span>
-                    </span>
-                  ) : account.lastReconciled ? (
-                    <>
-                      <CircleCheck size={14} className="ok" aria-hidden="true" />
-                      Reconciled {fDate(account.lastReconciled, 'numeric', 'auto')}
-                    </>
-                  ) : (
-                    <>
-                      <ClockAlert size={14} className="warn" aria-hidden="true" />
-                      Never reconciled
-                    </>
-                  )}
-                </span>
-                <ReconcilePopover account={account} onReconcile={onReconcile} />
-              </span>
-            )}
-            {stats && (
-              <>
-                <span className="acct-recon-grow" />
-                <span className="acct-recon-group acct-recon-group--review">
-                  <ReviewStrip
-                    count={stats.review}
-                    onReview={onReview}
-                    onStartReview={onStartReview}
-                  />
-                </span>
-              </>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -2259,58 +2259,59 @@
     padding-top: 0;
   }
 }
-/* All-accounts card: the three figures ARE the card — centred and large, no divider. The
-   review line appears under them only when something needs review (owner, 2026-11-14). */
-.acct-bal-card--overview {
+/* The three-figure balance card (All accounts, and every account without a value card): the
+   figures ARE the card — centred and large, no divider; the reconcile line sits centred under
+   them. The review queue lives in the register toolbar (ReviewStrip). */
+.acct-bal-card--centred {
   padding: 20px 24px 22px;
 }
-.acct-bal-card--overview .acct-bal-k {
+.acct-bal-card--centred .acct-bal-k {
   justify-content: center;
   font-size: 13px;
   letter-spacing: 0.08em;
   color: var(--muted);
 }
-.acct-bal-card--overview .acct-bal-breakdown {
+.acct-bal-card--centred .acct-bal-breakdown {
   justify-content: safe center;
   gap: 28px;
   margin-top: 14px;
 }
-.acct-bal-card--overview .acct-bal-grp {
+.acct-bal-card--centred .acct-bal-grp {
   gap: 28px;
 }
-.acct-bal-card--overview .acct-bal-part {
+.acct-bal-card--centred .acct-bal-part {
   align-items: center;
   gap: 4px;
 }
-.acct-bal-card--overview .acct-bal-fig {
+.acct-bal-card--centred .acct-bal-fig {
   font-size: 28px;
   letter-spacing: -0.02em;
 }
-.acct-bal-card--overview .acct-bal-lbl {
+.acct-bal-card--centred .acct-bal-lbl {
   font-size: 12.5px;
 }
-.acct-bal-card--overview .acct-bal-op {
+.acct-bal-card--centred .acct-bal-op {
   font-size: 22px;
   margin-top: 4px;
 }
-.acct-bal-card--overview .acct-recon-line {
+.acct-bal-card--centred .acct-recon-line {
   justify-content: center;
   border-top: none;
   padding-top: 0;
   margin-top: 16px;
 }
 @media (max-width: 640px) {
-  .acct-bal-card--overview .acct-bal-breakdown,
-  .acct-bal-card--overview .acct-bal-grp {
+  .acct-bal-card--centred .acct-bal-breakdown,
+  .acct-bal-card--centred .acct-bal-grp {
     gap: 8px;
   }
-  .acct-bal-card--overview .acct-bal-fig {
+  .acct-bal-card--centred .acct-bal-fig {
     font-size: 15px;
   }
-  .acct-bal-card--overview .acct-bal-lbl {
+  .acct-bal-card--centred .acct-bal-lbl {
     font-size: 10.5px;
   }
-  .acct-bal-card--overview .acct-bal-op {
+  .acct-bal-card--centred .acct-bal-op {
     font-size: 13px;
     margin-top: 1px;
   }
@@ -2360,23 +2361,13 @@
   color: var(--warn);
   font-weight: 600;
 }
-/* The line is two groups that never split internally: reconcile (status + Reconcile) on the left,
-   review (count chip + Start review + txn count) on the right. Both actions are the same outlined
-   pill so they read as actions; the backlog count is a soft warn chip, never a solid fill. */
+/* A group never splits internally: status + its action pill. */
 .acct-recon-group {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
 }
-.acct-recon-group--review {
-  gap: 6px;
-}
-.acct-recon-review {
-  display: contents;
-}
-.acct-recon-count,
-.acct-recon-start,
 .acct-recon-action.as-btn {
   display: inline-flex;
   align-items: center;
@@ -2396,41 +2387,22 @@
     border-color 0.12s,
     color 0.12s;
 }
-.acct-recon-start,
 .acct-recon-action.as-btn {
   border: 1px solid var(--line-strong);
   background: none;
   color: var(--ink);
 }
-.acct-recon-count {
-  border: 1px solid transparent;
-  background: color-mix(in srgb, var(--warn) 14%, transparent);
-  color: var(--warn);
-}
-.acct-recon-count-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
 @media (hover: hover) {
-  .acct-recon-start:hover,
   .acct-recon-action.as-btn:hover {
     border-color: var(--primary);
     color: var(--primary);
   }
-  .acct-recon-count:hover {
-    background: color-mix(in srgb, var(--warn) 22%, transparent);
-  }
 }
-.acct-recon-count:focus-visible,
-.acct-recon-start:focus-visible,
 .acct-recon-action.as-btn:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
 }
-/* Phone: each group is its own full-width row with its pill on the right — status · Reconcile,
-   then count chip + txns · Start review. */
+/* Phone: each group is its own full-width row with its pill on the right — status · Reconcile. */
 @media (max-width: 640px) {
   .acct-recon-line {
     row-gap: 10px;
@@ -2441,12 +2413,8 @@
   .acct-recon-line > .acct-recon-grow {
     display: none;
   }
-  .acct-recon-group > .acct-pop-wrap--line,
-  .acct-recon-group--review .acct-recon-start {
+  .acct-recon-group > .acct-pop-wrap--line {
     margin-left: auto;
-  }
-  .acct-recon-group--review .acct-recon-start {
-    order: 1;
   }
 }
 .acct-recon-stat.as-btn {
@@ -2914,6 +2882,95 @@
 .acct-filter-add-short {
   display: none;
 }
+/* Register actions beside the search — one joined control each, the toolbar's 29px height:
+   a status half (the review count, the reconcile date) and an action half. ReviewStrip,
+   ReconcileStatus. No overflow clip: the reconcile popover hangs below it. */
+.acct-pair {
+  --pair-r: calc(var(--radius-lg) - 1px);
+  display: inline-flex;
+  flex: none;
+  height: 29px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-2);
+}
+.acct-pair-k,
+.acct-pair-act,
+.acct-pair .acct-recon-action.as-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  min-height: 0;
+  padding: 0 11px;
+  border: none;
+  border-radius: 0;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+.acct-pair-k {
+  border-radius: var(--pair-r) 0 0 var(--pair-r);
+}
+.acct-pair-act,
+.acct-pair .acct-recon-action.as-btn {
+  color: var(--ink);
+  border-left: 1px solid var(--line);
+  border-radius: 0 var(--pair-r) var(--pair-r) 0;
+  cursor: pointer;
+}
+.acct-pair .acct-pop-wrap {
+  display: flex;
+}
+/* The review count is the warn half and a button (it filters the register). */
+.acct-pair-btn {
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+/* The reconcile status is information, not a control. */
+.acct-pair--reconcile .acct-pair-k {
+  color: var(--muted);
+  font-weight: 500;
+}
+.acct-pair--reconcile .ok {
+  color: var(--good);
+}
+.acct-pair--reconcile .warn {
+  color: var(--warn);
+}
+.acct-pair-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.acct-pair-icon {
+  display: none;
+}
+@media (hover: hover) {
+  .acct-pair-btn:hover {
+    background: color-mix(in srgb, var(--warn) 20%, transparent);
+  }
+  .acct-pair-act:hover,
+  .acct-pair .acct-recon-action.as-btn:hover {
+    background: var(--hover);
+    color: var(--ink);
+  }
+}
+.acct-pair-btn:focus-visible,
+.acct-pair-act:focus-visible,
+.acct-pair .acct-recon-action.as-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
 /* Compact toolbar on ONE row once the register column is too narrow for the labelled one
    (search ≥ 220px + All time + Columns + Add transaction ≈ 631px with the inset). Keyed on
    `.acct-main`'s width, not the viewport: a wide window with the account rail and Lucius open
@@ -2945,6 +3002,22 @@
   }
   .acct-filter-add-short {
     display: inline;
+  }
+  .acct-pair-lbl {
+    display: none;
+  }
+  .acct-pair-icon {
+    display: inline-flex;
+  }
+  .acct-pair-k,
+  .acct-pair-act,
+  .acct-pair .acct-recon-action.as-btn {
+    padding: 0 9px;
+  }
+  /* The reconcile status half is gone: its icon alone is the trigger, rounded both sides. */
+  .acct-pair--reconcile .acct-recon-action.as-btn {
+    border-left: none;
+    border-radius: var(--pair-r);
   }
 }
 .acct-advbadge {

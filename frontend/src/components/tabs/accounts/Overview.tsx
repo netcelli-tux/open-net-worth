@@ -1,6 +1,6 @@
 /**
  * Overview.tsx — All-accounts header: title + actions + Cleared+Uncleared=Working
- * balance card + group totals bar rows + footer stats.
+ * balance card + group totals bar rows.
  *
  * Presentational. Port of prototype/accounts/main.jsx Overview + AccountHeader
  * (all-accounts variant).
@@ -23,7 +23,6 @@ import {
 } from '../../../ui/icons'
 import type { AccountGroup } from './types'
 import { fCur } from './data'
-import { ReviewStrip } from './ReviewStrip'
 
 type OverviewMenuIcon =
   | 'payees'
@@ -87,17 +86,11 @@ export interface OverviewCashBalance {
   uncleared: number
 }
 
-export interface OverviewStats {
-  count: number
-  review: number
-}
-
 export interface OverviewProps {
   totals: OverviewTotals
   groups: AccountGroup[]
   /** Cash-accounts-only cleared/uncleared/total, in base currency */
   cashBalance: OverviewCashBalance
-  stats: OverviewStats
   /** Base currency code, e.g. "SGD" */
   baseCurrency: string
   collapsed: boolean
@@ -113,8 +106,6 @@ export interface OverviewProps {
   onManageInstitutions?: () => void
   onImport: () => void
   onExport: () => void
-  onReview: () => void
-  onStartReview: () => void
   onShowUncleared: () => void
   onArchivedAccounts?: () => void
   archivedCount?: number
@@ -126,7 +117,6 @@ export interface OverviewProps {
 
 export function Overview({
   cashBalance,
-  stats,
   baseCurrency,
   collapsed,
   onReopen,
@@ -138,8 +128,6 @@ export function Overview({
   onManageInstitutions,
   onImport,
   onExport,
-  onReview,
-  onStartReview,
   onShowUncleared,
   onArchivedAccounts,
   archivedCount = 0,
@@ -280,7 +268,7 @@ export function Overview({
       {/* Balance card — cash accounts only (checking/savings/e-wallet); see cashBalance's own
           doc comment for why credit cards, loans and investments are deliberately excluded. */}
       <div className="acct-bal">
-        <div className="acct-bal-card acct-bal-card--overview">
+        <div className="acct-bal-card acct-bal-card--centred">
           <div className="acct-bal-k">
             Cash
             <BalanceTermsInfo
@@ -323,14 +311,6 @@ export function Overview({
               </div>
             </div>
           </div>
-
-          {stats.review > 0 && (
-            <div className="acct-recon-line">
-              <span className="acct-recon-group acct-recon-group--review">
-                <ReviewStrip count={stats.review} onReview={onReview} onStartReview={onStartReview} />
-              </span>
-            </div>
-          )}
         </div>
       </div>
     </>

@@ -134,8 +134,8 @@ only goes away when you delete the whole account.
 
 When the balance in the app doesn't match your bank:
 
-1. Open the account and click **Reconcile** on the line under the balance, next to when the
-   account was last reconciled.
+1. Open the account and click **Reconcile** next to the search box above the register, beside
+   when the account was last reconciled. On a phone it's the clock or check icon there.
 2. It asks *"Is the real balance …?"* showing the **cleared** balance — the part your bank has
    already posted. Pending (uncleared) transactions aren't included, because they're not on
    your statement yet either.
@@ -146,7 +146,7 @@ When the balance in the app doesn't match your bank:
 
 The confirmation shows the balance it was reconciled at, or the adjustment it booked. Reconcile
 each account at least **once a month**: once the last reconcile is more than 30 days old, the
-**Reconciled** line under the balance turns to a warning and shows how many days ago it was,
+**Reconciled** status beside the search box turns to a warning and shows how many days ago it was,
 right beside the **Reconcile** button.
 
 You don't have to open each account to check. In the accounts list, an account says **Needs

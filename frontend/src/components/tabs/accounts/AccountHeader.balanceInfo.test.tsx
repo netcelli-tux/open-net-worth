@@ -30,7 +30,6 @@ it('puts one "i" beside the Balance title that explains all three figures', () =
     <AccountHeader
       account={ACCOUNT}
       dueInfo={null}
-      stats={null}
       menuOpen={false}
       setMenuOpen={noop}
       collapsed={false}
@@ -43,9 +42,6 @@ it('puts one "i" beside the Balance title that explains all three figures', () =
       onManageCategories={noop}
       onImport={noop}
       onExport={noop}
-      onReconcile={noop}
-      onReview={noop}
-      onStartReview={noop}
     />,
   )
 

@@ -100,8 +100,9 @@ A transaction added by an import, by Lucius, from email, or by an Automation can
 **needs review**. It already counts in your balances and reports — review is a check, not a
 holding area.
 
-1. In Accounts, click **N to review** to list them, or **Start review** to go through them one
-   card at a time.
+1. In Accounts, next to the search box above the register, click **N to review** to list them,
+   or **Start review** to go through them one card at a time. On a phone, these show as the
+   count and the card icon.
 2. On each card, correct the account, amount, date, payee or category if needed.
 3. Click **Approve** to save it and clear the flag, **Skip** to leave it for later, or **Reject**
    to delete it (you confirm first). On a touch screen, swipe right to approve, left to skip.
