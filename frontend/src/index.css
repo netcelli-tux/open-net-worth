@@ -890,6 +890,14 @@
     html:not([data-desktop-chrome='mac']) .topbar:not(:has(.ticker)) {
       display: none;
     }
+    /* .app-layout's top padding is 0 because the bar used to supply that gap; with the bar
+       gone, give the content the same gutter it has on the sides. Panel tabs (Accounts,
+       Skills, Lucius) are full-height shells that sit flush to the window, so they keep 0. */
+    html:not([data-desktop-chrome='mac'])
+      .topbar:not(:has(.ticker))
+      + .app-layout:not(.app-layout--panel) {
+      padding-top: max(24px, var(--safe-t));
+    }
   }
 
   /* ── macOS desktop shell: the window has no title bar ──
