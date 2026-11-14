@@ -883,18 +883,13 @@
     }
   }
 
-  .stamp {
-    font-size: 12px;
-    color: var(--faint);
-    /* Let the timestamp shrink first so the buttons keep their full label before any wrap. */
-    min-width: 0;
-  }
-  .topbar-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    /* Keep the action cluster intact; wrap to its own row when the timestamp + buttons don't fit. */
-    flex-shrink: 0;
+  /* Ticker off on a wide web window: the row would be empty (the hamburger shows only at
+     ≤640px, Lucius opens from its bottom-right dock), so it goes. The macOS app keeps it as
+     the window's drag strip. */
+  @media (min-width: 641px) {
+    html:not([data-desktop-chrome='mac']) .topbar:not(:has(.ticker)) {
+      display: none;
+    }
   }
 
   /* ── macOS desktop shell: the window has no title bar ──
@@ -1186,12 +1181,6 @@
      action cluster wraps under it (already flex-wrap), no horizontal overflow. */
     .topbar {
       gap: 6px 8px;
-    }
-    .stamp {
-      flex: 1 1 auto;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     /* The two-panel Accounts layout caps to 100vh on desktop; on a phone let it
@@ -1759,36 +1748,6 @@
   body.hide-amounts #privacy-btn {
     color: var(--ink);
     border-color: var(--muted);
-  }
-  /* GL-4: Lucius launch button uses design-system accent token rather than a
-   bespoke out-of-token purple. The "active" (open) state adopts the same
-   accent-soft palette used elsewhere for pressed/selected states. */
-  #chat-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: color-mix(in srgb, var(--lucius) 14%, transparent);
-    border: 1px solid color-mix(in srgb, var(--lucius) 35%, transparent);
-    border-radius: 8px;
-    color: var(--lucius);
-    font: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 5px 12px;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.02em;
-  }
-  @media (hover: hover) {
-    #chat-toggle-btn:hover {
-      background: color-mix(in srgb, var(--lucius) 22%, transparent);
-      color: var(--ink);
-    }
-  }
-  #chat-toggle-btn.active {
-    background: color-mix(in srgb, var(--lucius) 20%, transparent);
-    border-color: color-mix(in srgb, var(--lucius) 50%, transparent);
-    color: var(--ink);
   }
   /* Logout (P3-AUTH) — shares the topbar button look. */
   #logout-btn {
