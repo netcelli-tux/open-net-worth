@@ -335,7 +335,7 @@
    as a second outline inside the card. Flatten the tint onto the opaque surface instead. */
 @media (hover: hover) {
   .as-card.as-stack:hover {
-    background: color-mix(in srgb, var(--ink) 6%, var(--surface));
+    background: var(--hover-surface);
   }
 }
 .as-stack-top {
