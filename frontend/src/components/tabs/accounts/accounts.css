@@ -3864,12 +3864,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: text;
   min-width: 0;
 }
-/* inline editable cells */
+/* Inline-editable cells keep the row's pointer: a click opens the transaction, only a
+   double-click edits in place, so a text cursor promised the wrong action (owner, 2026-11-14). */
 .acct-tr [data-edit] {
-  cursor: text;
   border-radius: var(--radius-xs);
 }
 @media (hover: hover) {
