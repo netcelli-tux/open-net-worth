@@ -615,7 +615,7 @@
 @media (hover: hover) {
   .cn-page .rd-secret-eye:hover {
     color: var(--ink);
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    background: var(--hover);
   }
 }
 .cn-page .rd-formgrid {

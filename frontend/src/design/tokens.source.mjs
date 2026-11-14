@@ -154,27 +154,21 @@ export const tokenGroups = [
     ],
   },
   {
-    // A hover LIFTS whatever is already under the cursor; it never repaints it to a
-    // different shade. Mixing against --ink keeps that correct per theme automatically:
-    // on dark --ink is near-white so the veil lightens, on light it is near-black so it
-    // darkens. The opaque variants exist because an element that already carries a fill
-    // cannot take a translucent background without the page showing through.
+    // Hover and selected states are tinted with --accent, so the instance's accent colour
+    // (Settings → Appearance, set at runtime by ThemeProvider) shows wherever the user points
+    // or has selected something. The opaque variants exist because an element that already
+    // carries a fill cannot take a translucent background without the page showing through.
     label: 'Hover veils',
     category: 'color',
     tokens: [
-      ['hover', 'color-mix(in srgb, var(--ink) 6%, transparent)'],
-      ['hover-strong', 'color-mix(in srgb, var(--ink) 10%, transparent)'],
-      ['hover-surface', 'color-mix(in srgb, var(--ink) 6%, var(--surface))'],
-      ['hover-surface2', 'color-mix(in srgb, var(--ink) 6%, var(--surface2))'],
-      ['hover-bg-2', 'color-mix(in srgb, var(--ink) 6%, var(--bg-2))'],
-      // A SELECTED state must out-read a hover, or the two are indistinguishable once
-      // every surface shares the page colour. 13% is the first step that stays legible
-      // on #0e1014 without becoming a second card.
-      ['selected', 'color-mix(in srgb, var(--ink) 13%, transparent)'],
-      // A hover BORDER lifts too. --line-strong would do the job but is a fixed blue-grey
-      // slab (#313749, 19% sat); mixing against --ink keeps the edge in the same neutral
-      // family as the fill veil, so a hovered card never gains a hue it did not have.
-      ['hover-line', 'color-mix(in srgb, var(--ink) 16%, transparent)'],
+      ['hover', 'color-mix(in srgb, var(--accent) 10%, transparent)'],
+      ['hover-strong', 'color-mix(in srgb, var(--accent) 16%, transparent)'],
+      ['hover-surface', 'color-mix(in srgb, var(--accent) 10%, var(--surface))'],
+      ['hover-surface2', 'color-mix(in srgb, var(--accent) 10%, var(--surface2))'],
+      ['hover-bg-2', 'color-mix(in srgb, var(--accent) 10%, var(--bg-2))'],
+      // A SELECTED state must out-read a hover, or the two are indistinguishable.
+      ['selected', 'color-mix(in srgb, var(--accent) 20%, transparent)'],
+      ['hover-line', 'color-mix(in srgb, var(--accent) 45%, transparent)'],
     ],
   },
   {
