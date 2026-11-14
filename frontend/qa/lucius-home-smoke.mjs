@@ -71,18 +71,14 @@ async function main() {
     await page.waitForTimeout(1000)
     await page.screenshot({ path: `${outDir}/04-investments-tab.png` })
     const pillVisibleElsewhere = (await page.locator('.lx-dock-pill').count()) > 0
-    const topbarBtnElsewhere = (await page.locator('#chat-toggle-btn').count()) > 0
     console.log(`[smoke] LuciusDock pill (.lx-dock-pill) visible on Investments tab: ${pillVisibleElsewhere}`)
-    console.log(`[smoke] topbar "Lucius ✦" quick-open button visible on Investments tab: ${topbarBtnElsewhere}`)
 
     // 5. Navigate back to /lucius — pill should be gone again.
     await page.goto(instance.baseUrl + '/lucius')
     await page.waitForTimeout(1000)
     await page.screenshot({ path: `${outDir}/05-back-to-lucius.png` })
     const pillVisibleOnLucius = (await page.locator('.lx-dock-pill').count()) > 0
-    const topbarBtnOnLucius = (await page.locator('#chat-toggle-btn').count()) > 0
     console.log(`[smoke] LuciusDock pill visible back on Lucius tab: ${pillVisibleOnLucius} (expect false)`)
-    console.log(`[smoke] topbar "Lucius ✦" quick-open button visible on Lucius tab: ${topbarBtnOnLucius} (expect false)`)
 
     // 5b. Open "View all conversations" — should sit in a padded, non-edge-to-edge column.
     await page.getByText('View all conversations').click()
