@@ -2272,6 +2272,27 @@
     padding-top: 0;
   }
 }
+/* All-accounts card: nothing to reconcile, so the review line sits beside the figures instead of
+   alone under a divider — a lonely "N txns" in the bottom corner (owner, 2026-11-14). */
+@media (min-width: 641px) {
+  .acct-bal-card--overview {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 16px;
+  }
+  .acct-bal-card--overview > .acct-bal-k,
+  .acct-bal-card--overview > .acct-bal-breakdown {
+    grid-column: 1;
+  }
+  .acct-bal-card--overview > .acct-recon-line {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+    margin: 0 0 14px;
+    padding: 0;
+    border-top: none;
+  }
+}
 .acct-recon-line .ok {
   color: var(--good);
 }

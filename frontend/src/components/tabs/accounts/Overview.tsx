@@ -305,7 +305,7 @@ export function Overview({
       {/* Balance card — cash accounts only (checking/savings/e-wallet); see cashBalance's own
           doc comment for why credit cards, loans and investments are deliberately excluded. */}
       <div className="acct-bal">
-        <div className="acct-bal-card">
+        <div className="acct-bal-card acct-bal-card--overview">
           <div className="acct-bal-k">
             Cash
             <BalanceTermsInfo
@@ -349,7 +349,8 @@ export function Overview({
             </div>
           </div>
 
-          {/* Always rendered, even at 0 txns, so the card's height doesn't shift. */}
+          {/* Always rendered, even at 0 txns, so the card's height doesn't shift. Beside the
+              figures on a wide screen (there is no reconcile status to share its row). */}
           <div className="acct-recon-line">
             <span className="acct-recon-grow" />
             <span className="acct-recon-group acct-recon-group--review">
