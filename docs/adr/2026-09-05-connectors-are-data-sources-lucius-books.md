@@ -1,6 +1,6 @@
 ---
 title: Bank and broker connectors are data sources; Lucius books, the scheduler forgets
-status: Accepted
+status: Accepted (amended by 2026-11-13-a-bank-connector-can-book-its-rows-without-ai)
 date: 2026-09-05
 deciders: repo owner (decision) + orchestrating Claude agent (design)
 ---
@@ -110,29 +110,3 @@ sync pipeline:
   `.claude/rfcs/2026-08-10-connectors-architecture.md` §B7, Actual Budget `sync.ts`
 - **Why this way (one line):** the ledger choke already guarantees idempotency and refuses
   duplicates, so the only thing a hidden pipeline added was a clock nobody could see.
-
-## Amendment — 2026-11-13: a manual "Fetch and book" for Lunch Flow Personal
-
-**Decided by:** repo owner ("I don't want to use AI to run it").
-
-Booking a connector no longer *requires* a Lucius turn for the connectors in
-`services/connector_book.MANUAL_BOOK` (today only `lunch_flow_personal`). Its form has a
-**Fetch and book now** button (`POST /api/lunch-flow-personal/fetch-and-book`) that runs the same
-`connector_fetch.fetch`, then books through `ledger.bulk_create_transactions` with the L0 ref
-floor, as one import batch the form can undo. It is a click, not a schedule — the scheduler
-still forgets, and the Automation template is unchanged.
-
-What a model judged is withheld rather than guessed: a row the match engine bands `strong` or
-`review` against an existing transaction is listed and NOT booked or linked; a row on an unlinked
-provider account is counted and skipped; categories stay blank. So the button can only ADD rows
-nothing resembles, never merge, link or edit. Widening it to another connector is adding its key
-to `MANUAL_BOOK` plus a route, deliberately a per-connector decision.
-
-Same day, also owner's decision: a Fetch and book run then matches balances. Each linked
-`cash`/`credit` account has its start moved back to the oldest row the run booked
-(`tracking_start.align_tracking_start`, balance-preserving), then is reconciled to the
-provider's reported balance against its cleared balance (`ledger.reconcile`; booked rows are
-cleared — they posted). The owner chose automatic over a per-account button, accepting that
-an adjustment also absorbs a gap from rows held back as possible duplicates. A card reporting
-a positive balance is skipped (owed vs in-credit unverified). A run that adjusted or moved a
-start is not offered for one-click undo, which rolls back the batch's rows only.

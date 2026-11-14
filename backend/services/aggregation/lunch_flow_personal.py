@@ -91,11 +91,10 @@ def fetch_window(
     if account:
         lf_accounts = [a for a in lf_accounts if str(a.get("id")) == account]
     accounts = [_account_to_common(a) for a in lf_accounts]
-    if accounts_only:
-        # Balances only on the accounts listing (provider_accounts): a transaction fetch is
-        # called once per window chunk and has no use for them.
-        for common in accounts:
-            common["balance"] = _balance(store, common["provider_account_id"])
+    # Every fetch carries balances: the bank sync matches each account to it, and a sync run
+    # fetches one account at a time, so this is one extra read per account.
+    for common in accounts:
+        common["balance"] = _balance(store, common["provider_account_id"])
 
     rows: list[dict] = []
     income = expense = 0

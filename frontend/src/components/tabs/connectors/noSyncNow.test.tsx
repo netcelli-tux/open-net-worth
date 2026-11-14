@@ -8,10 +8,6 @@
 // on a connector card: YNAB's scheduled two-way sync has its own "Sync now" under
 // /api/ynab/sync (automations/builtin/YnabSyncDetail.test.tsx). The YNAB card only READS that status for its
 // one-line summary, so for YNAB exactly that one GET is allowed, and no button.
-//
-// A second (owner decision, 2026-11-13): Lunch Flow Personal has "Fetch and book now", which
-// books with no model (services/connector_book.py, ADR 2026-09-05 amendment). It renders only on
-// a click, never on load, and its URL is /fetch-and-book — so the load-time guard below still holds.
 
 import type { JSX } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

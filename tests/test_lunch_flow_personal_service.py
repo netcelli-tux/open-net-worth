@@ -70,14 +70,15 @@ def test_fetch_sends_the_key_and_window_and_maps_rows(monkeypatch):
 
     assert calls[0]["url"] == "https://www.lunchflow.app/api/v1/accounts"
     assert all(c["headers"]["x-api-key"] == "lfp-key" for c in calls)
-    assert calls[1]["params"] == {"from": "2026-09-15", "to": "2026-10-15"}
+    [txn_call] = [c for c in calls if c["url"].endswith("/transactions")]
+    assert txn_call["params"] == {"from": "2026-09-15", "to": "2026-10-15"}
     assert win.accounts == [
         {
             "provider_account_id": "7",
             "name": "Everyday",
             "mask": None,
             "currency": "GBP",
-            "balance": None,
+            "balance": -42.5,
         }
     ]
     # tx_2 is outside the window: dropped even though the server returned it.
@@ -93,10 +94,11 @@ def test_accounts_only_reads_balances_and_no_transactions(monkeypatch):
     assert win.rows == [] and win.accounts[0]["balance"] == -42.5
 
 
-def test_a_transaction_fetch_reads_no_balances(monkeypatch):
-    calls = _mock(monkeypatch)
-    svc.fetch_window(_store(), "2026-09-15", "2026-10-15", None)
-    assert not any(c["url"].endswith("/balance") for c in calls)
+def test_a_transaction_fetch_carries_balances(monkeypatch):
+    """The bank sync reads each account's balance from its transaction fetch."""
+    _mock(monkeypatch)
+    win = svc.fetch_window(_store(), "2026-09-15", "2026-10-15", "7")
+    assert win.accounts[0]["balance"] == -42.5
 
 
 def test_bad_key_is_an_auth_error_and_never_leaks_the_key(monkeypatch):

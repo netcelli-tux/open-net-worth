@@ -2,20 +2,16 @@
 
 * ``GET /api/lunch-flow-personal/status`` — public config + stats (only ``has_api_key``).
 * ``PUT /api/lunch-flow-personal/config`` — set the API key (blank keeps the saved one).
-* ``POST /api/lunch-flow-personal/fetch-and-book`` — fetch and book new transactions with no
-  model in the loop (``services.connector_book``); Lucius's fetch tool still works too.
 """
 
 from __future__ import annotations
 
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 
-from backend.core.errors import OpenNetWorthError, to_http_status
 from backend.db.lunch_flow_personal_config_store import LunchFlowPersonalConfigStore
-from backend.services import connector_book
 
 router = APIRouter()
 
@@ -45,15 +41,3 @@ def update_lunch_flow_personal_config(body: LunchFlowPersonalConfigUpdate):
         changes["enabled"] = bool(body.enabled)
     store.update(changes)
     return store.public()
-
-
-class FetchAndBookRequest(BaseModel):
-    since: Optional[str] = None  # YYYY-MM-DD; omitted = the connector's usual window
-
-
-@router.post("/api/lunch-flow-personal/fetch-and-book")
-def lunch_flow_personal_fetch_and_book(body: FetchAndBookRequest):
-    try:
-        return connector_book.fetch_and_book("lunch_flow_personal", since=body.since)
-    except OpenNetWorthError as exc:
-        raise HTTPException(to_http_status(exc), exc.message or str(exc)) from exc
