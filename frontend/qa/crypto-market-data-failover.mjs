@@ -248,7 +248,8 @@ async function captureLuciusMatrix(page, app, bitcoinId) {
     await gotoAsset(page, app.baseUrl, bitcoinId)
     await waitForText(page, 'Yahoo Finance')
 
-    await page.locator('#chat-toggle-btn').click()
+    await page.locator('.lx-dock-pill').click()
+    await page.getByRole('button', { name: 'Open in side panel' }).click()
     await page.locator('.lx-side.on').waitFor({ state: 'visible', timeout: 20_000 })
     await assertLuciusDoesNotCoverMarketData(page, '.ad-chart-wrap', `${width}px chart`)
     await assertNoHorizontalOverflow(page, `${width}px chat-open chart`)

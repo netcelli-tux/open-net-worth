@@ -1481,39 +1481,16 @@ function RouterShellInner() {
                     >
                       <Menu size={18} strokeWidth={1.6} aria-hidden="true" />
                     </button>
-                    {!isMobile &&
-                      (tickerOn ? (
-                        <TickerStrip
-                          rows={positionRows}
-                          priceStatus={priceStatus}
-                          asOf={nowShort}
-                          asOfLong={`As of ${now} • ${PRICE_STATUS_LABEL[priceStatus]}`}
-                        />
-                      ) : (
-                        <div className="stamp">
-                          As of {now} •{' '}
-                          <span
-                            style={{
-                              color: priceStatus === 'live' ? 'var(--good)' : 'var(--faint)',
-                            }}
-                          >
-                            {PRICE_STATUS_LABEL[priceStatus]}
-                          </span>
-                        </div>
-                      ))}
-                    <div className="topbar-actions">
-                      {!chatOpen && !isMobile && tabToRender !== 'lucius' && (
-                        <button
-                          id="chat-toggle-btn"
-                          onClick={() => {
-                            openLucius()
-                          }}
-                          title="Lucius — ⌘/"
-                        >
-                          Lucius ✦<kbd className="cmdk-btn-kbd">⌘/</kbd>
-                        </button>
-                      )}
-                    </div>
+                    {/* Ticker off ⇒ no price stamp: a "Prices: cached" time means nothing
+                        once the prices themselves are hidden (owner, 2026-11-14). */}
+                    {!isMobile && tickerOn && (
+                      <TickerStrip
+                        rows={positionRows}
+                        priceStatus={priceStatus}
+                        asOf={nowShort}
+                        asOfLong={`As of ${now} • ${PRICE_STATUS_LABEL[priceStatus]}`}
+                      />
+                    )}
                   </div>
                   <div
                     ref={appLayoutRef}

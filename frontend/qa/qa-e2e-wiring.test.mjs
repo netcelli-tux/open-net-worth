@@ -63,7 +63,7 @@ test('CMD-01 inspects the actual Settings key-write response and restored provid
 
 test('CMD-01 proves the required Lucius open and closed viewport matrix', () => {
   assert.match(cmdScript, /for \(const width of \[640, 1024, 1440\]\)/)
-  assert.match(cmdScript, /#chat-toggle-btn/)
+  assert.match(cmdScript, /Open in side panel/)
   assert.match(cmdScript, /assertLuciusDoesNotCoverMarketData/)
   assert.match(cmdScript, /CMD-01-chart-chat-closed-\$\{width\}\.png/)
   assert.match(cmdScript, /CMD-01-chart-chat-open-\$\{width\}\.png/)
