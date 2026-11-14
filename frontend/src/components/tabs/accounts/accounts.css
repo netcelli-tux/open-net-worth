@@ -1816,16 +1816,9 @@
     padding: 12px;
   }
 }
-/* Responsive header: when the register column gets narrow, fold the secondary actions
-   (Manage payees / Import) into the ⋯ overflow menu so
-   the title + primary action + ⋯ stay on ONE line. Container-query on `.acct-main`
-   so it tracks the header's REAL width (sidebar collapsed/expanded, Lucius panel
-   open), not the viewport. Default = wide: menu-only items hidden, inline shown. */
-/* `.acct-menu` scoped so it outranks `.acct-menu button { display: flex }` — unscoped, the
-   folded-in items showed in the menu beside their inline twins at every width. */
-.acct-menu .acct-menu-collapsible {
-  display: none;
-}
+/* Narrow register column: drop the subtitle and let the title wrap. Container-query on
+   `.acct-main` so it tracks the header's REAL width (sidebar, Lucius panel), not the viewport.
+   Manage payees / categories and Import live in the ⋯ menu at every width (owner, 2026-11-14). */
 @container acctmain (max-width: 860px) {
   .acct-head-sub {
     display: none;
@@ -1835,12 +1828,6 @@
     overflow: visible;
     text-overflow: clip;
     overflow-wrap: anywhere;
-  }
-  .acct-head-collapsible {
-    display: none;
-  }
-  .acct-menu .acct-menu-collapsible {
-    display: flex;
   }
 }
 /* ── overview cards ───────────────────────────────────────────────────────── */
@@ -2164,7 +2151,7 @@
 }
 .acct-bal-lbl {
   font-size: 11px;
-  color: var(--faint);
+  color: var(--muted);
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -2272,6 +2259,62 @@
     padding-top: 0;
   }
 }
+/* All-accounts card: the three figures ARE the card — centred and large, no divider. The
+   review line appears under them only when something needs review (owner, 2026-11-14). */
+.acct-bal-card--overview {
+  padding: 20px 24px 22px;
+}
+.acct-bal-card--overview .acct-bal-k {
+  justify-content: center;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.acct-bal-card--overview .acct-bal-breakdown {
+  justify-content: safe center;
+  gap: 28px;
+  margin-top: 14px;
+}
+.acct-bal-card--overview .acct-bal-grp {
+  gap: 28px;
+}
+.acct-bal-card--overview .acct-bal-part {
+  align-items: center;
+  gap: 4px;
+}
+.acct-bal-card--overview .acct-bal-fig {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+.acct-bal-card--overview .acct-bal-lbl {
+  font-size: 12.5px;
+}
+.acct-bal-card--overview .acct-bal-op {
+  font-size: 22px;
+  margin-top: 4px;
+}
+.acct-bal-card--overview .acct-recon-line {
+  justify-content: center;
+  border-top: none;
+  padding-top: 0;
+  margin-top: 16px;
+}
+@media (max-width: 640px) {
+  .acct-bal-card--overview .acct-bal-breakdown,
+  .acct-bal-card--overview .acct-bal-grp {
+    gap: 8px;
+  }
+  .acct-bal-card--overview .acct-bal-fig {
+    font-size: 15px;
+  }
+  .acct-bal-card--overview .acct-bal-lbl {
+    font-size: 10.5px;
+  }
+  .acct-bal-card--overview .acct-bal-op {
+    font-size: 13px;
+    margin-top: 1px;
+  }
+}
 .acct-recon-line .ok {
   color: var(--good);
 }
@@ -2328,11 +2371,6 @@
 }
 .acct-recon-group--review {
   gap: 6px;
-}
-/* A little extra room after the review pills only — alone on a phone row it lines up with the
-   status icon above. */
-.acct-recon-review + .acct-recon-txns {
-  margin-left: 6px;
 }
 .acct-recon-review {
   display: contents;
@@ -3826,12 +3864,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: text;
   min-width: 0;
 }
-/* inline editable cells */
+/* Inline-editable cells keep the row's pointer: a click opens the transaction, only a
+   double-click edits in place, so a text cursor promised the wrong action (owner, 2026-11-14). */
 .acct-tr [data-edit] {
-  cursor: text;
   border-radius: var(--radius-xs);
 }
 @media (hover: hover) {
