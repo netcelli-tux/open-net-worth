@@ -49,7 +49,9 @@ import { tokensToFilterPatch, combineDateRange, addFilterToken } from './tokenFi
 
 import { Sidebar } from './Sidebar'
 import { Overview } from './Overview'
-import { AccountHeader, type DueInfo } from './AccountHeader'
+import { ReviewStrip } from './ReviewStrip'
+import { ReconcileStatus } from './ReconcileStatus'
+import { AccountHeader, hasTotalFooter, type DueInfo } from './AccountHeader'
 import { ArchivedAccountsModal } from './ArchivedAccountsModal'
 import { Register } from './Register'
 import { useColumnVisibility } from './columns'
@@ -733,14 +735,6 @@ export function AccountsTab({
     }
   }, [L.groups])
 
-  // count = the server-reported total for the current account/date scope (not the loaded page count).
-  const stats = useMemo(
-    () => ({
-      count: L.total || transactions.filter((t) => !t.deleted).length,
-      review: reviewTotal,
-    }),
-    [transactions, L.total, reviewTotal],
-  )
   // CC1: the due banner must reflect the last CLOSED statement's balance minus any payment
   // already received — never the raw live account.balance, which is negative (liability sign)
   // and folds in brand-new post-payment spending from the still-open cycle.
@@ -2132,7 +2126,6 @@ export function AccountsTab({
                   <AccountHeader
                     account={selectedAccount}
                     dueInfo={dueInfo}
-                    stats={stats}
                     menuOpen={menuOpen}
                     setMenuOpen={setMenuOpen}
                     collapsed={railCollapsed}
@@ -2183,11 +2176,8 @@ export function AccountsTab({
                       setMenuOpen(false)
                       exportCsv(filtered)
                     }}
-                    onReconcile={onReconcile}
                     onReconcileTotal={onReconcileTotal}
                     onConfirmHeldTotal={onConfirmHeldTotal}
-                    onReview={addReviewToken}
-                    onStartReview={() => surfaces.openReview('all', selectedAccount.id)}
                   />
                 </>
               ) : (
@@ -2195,7 +2185,6 @@ export function AccountsTab({
                   totals={totals}
                   groups={L.groups}
                   cashBalance={L.cashBalance}
-                  stats={stats}
                   baseCurrency={baseCurrency}
                   collapsed={railCollapsed}
                   onReopen={openAccountNavigator}
@@ -2211,8 +2200,6 @@ export function AccountsTab({
                   }}
                   onImport={() => setImportState({ accountId: null })}
                   onExport={() => exportCsv(filtered)}
-                  onReview={addReviewToken}
-                  onStartReview={() => surfaces.openReview('all')}
                   onShowUncleared={addUnclearedToken}
                   onArchivedAccounts={openArchivedAccounts}
                   archivedCount={archivedAccounts.length}
@@ -2239,6 +2226,18 @@ export function AccountsTab({
                     columnVis={columnVis}
                     showHidden={showHidden}
                     onToggleShowHidden={() => setShowHidden((v) => !v)}
+                    actions={
+                      <>
+                        {selectedAccount && !hasTotalFooter(selectedAccount) && (
+                          <ReconcileStatus account={selectedAccount} onReconcile={onReconcile} />
+                        )}
+                        <ReviewStrip
+                          count={reviewTotal}
+                          onReview={addReviewToken}
+                          onStartReview={() => surfaces.openReview('all', selectedAccount?.id)}
+                        />
+                      </>
+                    }
                   />
                   <ActiveChips
                     filter={filter}

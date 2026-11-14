@@ -31,7 +31,6 @@ function header(externalIds: unknown[]) {
     <AccountHeader
       account={account}
       dueInfo={null}
-      stats={null}
       menuOpen={false}
       setMenuOpen={noop}
       collapsed={false}
@@ -44,9 +43,6 @@ function header(externalIds: unknown[]) {
       onManageCategories={noop}
       onImport={noop}
       onExport={noop}
-      onReconcile={noop}
-      onReview={noop}
-      onStartReview={noop}
     />,
   )
 }

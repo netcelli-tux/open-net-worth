@@ -1,11 +1,12 @@
 import { useNavigate } from '@tanstack/react-router'
-import { Sparkles } from 'lucide-react'
+import { Check, Sparkles } from 'lucide-react'
 import { authFetch } from '../../../../api/client'
 import { useCategories } from '../../../../hooks/useCategories'
 import { useChatComposer } from '../../../../state/chatComposer'
 import { useQueryCache } from '../../../../state/queryCache'
-import { fAmountNative, fDate } from '../../../../utils/format'
-import { Badge, Cluster, ErrorState, Modal, Skeleton, Text } from '../../../ui'
+import { fDate, getBaseCurrency } from '../../../../utils/format'
+import { fCur } from '../../accounts/format'
+import { Badge, Button, Cluster, ErrorState, Modal, Skeleton, Text } from '../../../ui'
 import {
   STATUS_LABEL,
   STATUS_TONE,
@@ -16,12 +17,13 @@ import {
 } from '../../imports/runs'
 import { useTransactionSurfaces } from '../../accounts/transactionSurfacesContext'
 
-// One bank sync run, opened from its History row (ADR 2026-11-13): a line on the run, a line on
-// what it did with View in register (the register filtered to the run's batch), then the
-// transactions it booked, each opening its detail drawer.
+// One bank sync run, opened from its History row (ADR 2026-11-13): one line on what it did; the
+// transactions it booked, by day, drawn as the Accounts register draws them (its own classes and
+// category pill: payee, category or Uncategorized, amount), each opening its detail drawer
+// OVER the report so you can go row by row; View in register and Categorize with Lucius in the
+// footer (owner, 2026-11-14). The account shows only when the run read more than one.
 
 const DID: [string, (n: number) => string][] = [
-  ['booked', (n) => `${n} booked`],
   ['already_booked', (n) => `${n} already in your book`],
   ['pending', (n) => `${n} of them pending (uncleared)`],
   ['settled', (n) => `${n} pending cleared`],
@@ -47,6 +49,9 @@ interface BookedRow {
   to_amount: number | null
   to_currency: string | null
   to_account_name?: string | null
+  // A foreign charge: what the merchant charged, beside the amount the account paid.
+  original_amount?: number | null
+  original_currency?: string | null
 }
 
 function useBooked(runId: string) {
@@ -66,16 +71,20 @@ export function BankRunReport({ runId, onClose }: { runId: string; onClose: () =
   const run = useRun(runId)
   const r = run.data
   const counts = (r?.counts ?? {}) as unknown as Record<string, number>
+  const booked = (counts.booked ?? 0) > 0
   return (
     <Modal
       open
       size="md"
+      className="bs-run-modal"
       onClose={onClose}
       title={
         r ? (
           <Cluster gap="--space-3">
-            {`Sync · ${formatWhen(r.started_at)}`}
-            <Badge tone={STATUS_TONE[r.status]}>{STATUS_LABEL[r.status]}</Badge>
+            {`${r.plan_name || 'Bank'} sync`}
+            {r.status !== 'done' && (
+              <Badge tone={STATUS_TONE[r.status]}>{STATUS_LABEL[r.status]}</Badge>
+            )}
           </Cluster>
         ) : (
           'Sync'
@@ -84,12 +93,13 @@ export function BankRunReport({ runId, onClose }: { runId: string; onClose: () =
       subtitle={
         r
           ? [
-              r.trigger === 'scheduled' ? 'Scheduled' : 'Started by you',
-              `took ${formatDuration(r)}`,
-              `read ${counts.fetched ?? 0} from the bank`,
+              formatWhen(r.started_at),
+              formatDuration(r),
+              r.trigger === 'scheduled' ? 'scheduled' : 'started by you',
             ].join(' · ')
           : undefined
       }
+      footer={r && booked ? <RunFooter r={r} onClose={onClose} /> : undefined}
     >
       {run.error ? (
         <ErrorState
@@ -99,24 +109,16 @@ export function BankRunReport({ runId, onClose }: { runId: string; onClose: () =
       ) : !r ? (
         <Skeleton height={120} />
       ) : (
-        <RunBody r={r} counts={counts} onClose={onClose} />
+        <RunBody r={r} counts={counts} />
       )}
     </Modal>
   )
 }
 
-function RunBody({
-  r,
-  counts,
-  onClose,
-}: {
-  r: RunRecord
-  counts: Record<string, number>
-  onClose: () => void
-}) {
-  const navigate = useNavigate()
+function RunBody({ r, counts }: { r: RunRecord; counts: Record<string, number> }) {
   const did = DID.filter(([k]) => (counts[k] ?? 0) > 0).map(([k, say]) => say(counts[k]!))
   const problems = [...(r.errors ?? []), ...((r.warnings ?? []) as unknown[])].map(text)
+  const n = counts.booked ?? 0
   return (
     <div className="bs-run">
       {r.status === 'failed' ? (
@@ -124,35 +126,42 @@ function RunBody({
           {r.error || 'This run failed; nothing was booked.'}
         </Text>
       ) : (
-        <div className="bs-run-head">
-          <Text size="sm">{did.length ? did.join(' · ') : 'Nothing new.'}</Text>
-          {(counts.booked ?? 0) > 0 && (
-            <button
-              type="button"
-              className="a3-linkbtn"
-              onClick={() => {
-                onClose()
-                void navigate({
-                  to: '/accounts',
-                  search: {
-                    batch: `bank_sync:${r.id}`,
-                    batchLabel: `${r.plan_name || 'Bank'} sync · ${formatWhen(r.started_at)}`,
-                  } as never,
-                } as never)
-              }}
-            >
-              View in register
-            </button>
-          )}
-          {(counts.booked ?? 0) > 0 && <CategorizeWithLucius r={r} onClose={onClose} />}
-        </div>
+        <p className="bs-run-sum">
+          {n > 0 && <Check size={15} className="bs-run-ok" aria-hidden="true" />}
+          <strong>{n ? `${n} booked` : 'Nothing new'}</strong>
+          {did.length > 0 && <span className="bs-run-facts">{did.join(' · ')}</span>}
+        </p>
       )}
       {problems.map((p, i) => (
         <Text key={i} size="sm" tone="warn">
           {p}
         </Text>
       ))}
-      {(counts.booked ?? 0) > 0 && <Booked runId={r.id} onClose={onClose} />}
+      {n > 0 && <Booked runId={r.id} />}
+    </div>
+  )
+}
+
+function RunFooter({ r, onClose }: { r: RunRecord; onClose: () => void }) {
+  const navigate = useNavigate()
+  return (
+    <div className="bs-run-foot">
+      <Button
+        size="sm"
+        onClick={() => {
+          onClose()
+          void navigate({
+            to: '/accounts',
+            search: {
+              batch: `bank_sync:${r.id}`,
+              batchLabel: `${r.plan_name || 'Bank'} sync · ${formatWhen(r.started_at)}`,
+            } as never,
+          } as never)
+        }}
+      >
+        View in register
+      </Button>
+      <CategorizeWithLucius r={r} onClose={onClose} />
     </div>
   )
 }
@@ -169,33 +178,33 @@ function CategorizeWithLucius({ r, onClose }: { r: RunRecord; onClose: () => voi
   const dates = open.map((t) => t.date).sort()
   const first = dates[0]!
   const last = dates[dates.length - 1]!
-  const accounts = [
-    ...new Set(
-      open.map((t) => (t.from_account_id ? t.from_account_name : t.to_account_name) || ''),
-    ),
-  ].filter(Boolean)
+  const accounts = [...new Set(open.map(accountOf))].filter(Boolean)
   const span = first === last ? fDate(first) : `${fDate(first)} – ${fDate(last)}`
   const prompt =
     `Categorize the ${open.length} uncategorized ${open.length === 1 ? 'transaction' : 'transactions'} ` +
     `the ${r.plan_name || 'bank'} sync booked on ${fDate(r.started_at.slice(0, 10))}: all of them, ` +
     `dated ${span}${accounts.length ? `, in ${accounts.join(', ')}` : ''}.`
   return (
-    <button
-      type="button"
-      className="a3-linkbtn bs-run-lucius"
+    <Button
+      size="sm"
+      variant="primary"
+      className="bs-run-lucius"
+      iconLeft={<Sparkles size={13} aria-hidden="true" />}
       onClick={() => {
         composer.setPendingText(prompt)
         composer.requestOpen(true)
         onClose()
       }}
     >
-      <Sparkles size={12} aria-hidden="true" />
       Categorize with Lucius
-    </button>
+    </Button>
   )
 }
 
-function Booked({ runId, onClose }: { runId: string; onClose: () => void }) {
+const accountOf = (t: BookedRow) =>
+  (t.from_account_id ? t.from_account_name : t.to_account_name) || ''
+
+function Booked({ runId }: { runId: string }) {
   const booked = useBooked(runId)
   const { openTransactionById } = useTransactionSurfaces()
   const { catMap } = useCategories()
@@ -206,46 +215,101 @@ function Booked({ runId, onClose }: { runId: string; onClose: () => void }) {
         Could not load what this run booked.
       </Text>
     )
+  const rows = booked.data ?? []
+  const manyAccounts = new Set(rows.map(accountOf)).size > 1
+  const days: [string, BookedRow[]][] = []
+  for (const t of rows) {
+    const day = days[days.length - 1]
+    if (day && day[0] === t.date) day[1].push(t)
+    else days.push([t.date, [t]])
+  }
   return (
-    <ul className="bs-run-list" aria-label="Booked transactions">
-      {(booked.data ?? []).map((t) => {
-        const out = !!t.from_account_id
-        const amount = out ? -(t.from_amount ?? 0) : (t.to_amount ?? 0)
-        const currency = (out ? t.from_currency : t.to_currency) ?? undefined
-        const account = (out ? t.from_account_name : t.to_account_name) ?? ''
-        const category = t.category
-          ? (catMap[t.category]?.label ?? 'Uncategorized')
-          : 'Uncategorized'
-        return (
-          <li key={t.id}>
-            <button
-              type="button"
-              className="bs-run-row"
-              aria-label={`Open ${t.payee_name || t.description}`}
-              onClick={() => {
-                // The detail drawer opens over the page; the report closes first so it
-                // isn't left stacked on top of it.
-                onClose()
-                // Two ticks: closing the report hands focus back to its History row a tick
-                // later, and a drawer already open would read that as focus leaving it and
-                // close at once. Opened after the hand-back, the drawer keeps the focus.
-                setTimeout(() => {
-                  setTimeout(() => openTransactionById(t.id, t.payee_name || t.description), 0)
-                }, 0)
-              }}
-            >
-              <span className="when">{fDate(t.date)}</span>
-              <span className="what">
-                <span>{t.payee_name || t.description}</span>
-                <span className="sub">{`${account} · ${category}`}</span>
-              </span>
-              <span className={`amt${amount < 0 ? '' : ' in'}`}>
-                {`${amount < 0 ? '−' : '+'}${fAmountNative(Math.abs(amount), currency)}`}
-              </span>
-            </button>
-          </li>
-        )
-      })}
-    </ul>
+    <div className="bs-run-days" aria-label="Booked transactions">
+      {days.map(([date, txns]) => (
+        <section key={date} className="bs-run-day">
+          <h4 className="bs-run-date">{fDayLabel(date)}</h4>
+          <ul className="bs-run-list">
+            {txns.map((t) => (
+              <BookedLine
+                key={t.id}
+                t={t}
+                manyAccounts={manyAccounts}
+                category={t.category ? catMap[t.category] : undefined}
+                onOpen={() =>
+                  openTransactionById(t.id, t.payee_name || t.description, { overModal: true })
+                }
+              />
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
   )
+}
+
+/** One booked transaction, drawn with the register's own cell classes. */
+function BookedLine({
+  t,
+  manyAccounts,
+  category,
+  onOpen,
+}: {
+  t: BookedRow
+  manyAccounts: boolean
+  category?: { label: string; color: string }
+  onOpen: () => void
+}) {
+  const out = !!t.from_account_id
+  const amount = out ? -(t.from_amount ?? 0) : (t.to_amount ?? 0)
+  const currency = (out ? t.from_currency : t.to_currency) ?? undefined
+  return (
+    <li>
+      <button
+        type="button"
+        className="bs-run-row"
+        aria-label={`Open ${t.payee_name || t.description}`}
+        onClick={onOpen}
+      >
+        <span className="bs-run-payee">
+          <span className="acct-payee-nm">{t.payee_name || t.description}</span>
+          {manyAccounts && <span className="acct-payee-sub">{accountOf(t)}</span>}
+        </span>
+        <span className="bs-run-cat">
+          {t.category ? (
+            <CategoryPill meta={category} />
+          ) : (
+            <span className="acct-unsorted">Uncategorized</span>
+          )}
+        </span>
+        <span className={`acct-td-amt ${amount < 0 ? 'neg' : 'pos'}`}>
+          <span className="acct-amt-main">
+            {`${amount < 0 ? '−' : '+'}${fCur(Math.abs(amount), currency ?? getBaseCurrency(), { cents: true })}`}
+          </span>
+          {t.original_amount != null && t.original_currency && (
+            <span className="acct-amt-orig">
+              {fCur(Math.abs(t.original_amount), t.original_currency, { cents: true })}
+            </span>
+          )}
+        </span>
+      </button>
+    </li>
+  )
+}
+
+/** The register's category pill (TxnRow's `categoryPill`): the category's colour, tinted. */
+function CategoryPill({ meta }: { meta?: { label: string; color: string } }) {
+  const color = meta?.color || '#7c8595'
+  return (
+    <span className="acct-pill" style={{ background: color + '26', color }}>
+      {meta?.label || 'Uncategorized'}
+    </span>
+  )
+}
+
+/** "Sat, Nov 14" — one run spans days, not years. */
+function fDayLabel(iso: string): string {
+  const d = new Date(`${iso}T00:00:00`)
+  return Number.isNaN(d.getTime())
+    ? iso
+    : d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
 }

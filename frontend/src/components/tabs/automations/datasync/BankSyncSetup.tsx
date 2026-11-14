@@ -12,12 +12,8 @@ import {
 } from './BankSyncParts'
 import { outOfReads, useAct } from './bankSyncHelpers'
 import { Step } from './SyncSetupSteps'
-import {
-  bankSyncSend,
-  type BankSyncAccount,
-  type BankSyncStatus,
-  type ModeResult,
-} from './bankSync'
+import { bankSyncSend, type BankSyncAccount, type BankSyncStatus } from './bankSync'
+import type { ImportAccountLine } from '../../imports/runs'
 
 // A bank's sync before it is on (ADR 2026-11-13), as the budget apps' setup reads: pick the
 // accounts, bring in the history, turn it on. Turning it on without step 2 is allowed — its first
@@ -66,12 +62,12 @@ export function BankSyncSetup({ status }: { status: BankSyncStatus }) {
         >
           {status.connected === false ? (
             <ConnectorSetupButton status={status} label={`Connect ${status.label}…`} />
-          ) : accounts.length === 0 ? (
-            <LinkAccountsButton status={status} primary />
           ) : (
+            // One place for the Link button whether accounts are linked or not: it owns the
+            // Link dialog, and moving it (no accounts ↔ some) re-made it and shut the dialog.
             <>
-              <AccountBoxes status={status} busy={busy} act={act} />
-              <LinkAccountsButton status={status} />
+              {accounts.length > 0 && <AccountBoxes status={status} busy={busy} act={act} />}
+              <LinkAccountsButton status={status} primary={accounts.length === 0} />
             </>
           )}
         </Step>
@@ -126,9 +122,6 @@ export function BankSyncSetup({ status }: { status: BankSyncStatus }) {
           {reached < 2 ? null : (
             <>
               <ScheduleMenu status={status} busy={busy} act={act} />
-              {status.mode === 'lucius' && (
-                <p className="bs-note">Pauses the Lucius Automation that syncs it now.</p>
-              )}
               <div className="bs-actions">
                 <Button
                   size="sm"
@@ -137,9 +130,7 @@ export function BankSyncSetup({ status }: { status: BankSyncStatus }) {
                   loading={busy === 'mode'}
                   disabled={busy !== null}
                   onClick={() =>
-                    void act('mode', () =>
-                      bankSyncSend<ModeResult>(`/${p}/mode`, 'PUT', { mode: 'data' }),
-                    )
+                    void act('mode', () => bankSyncSend(`/${p}/mode`, 'PUT', { mode: 'data' }))
                   }
                 >
                   Turn on
@@ -153,8 +144,6 @@ export function BankSyncSetup({ status }: { status: BankSyncStatus }) {
   )
 }
 
-/** "6 transactions imported, Nov 5 – Nov 13 · 3 pending" — counted in the book (a run's own
- *  record can be gone). */
 /** The import, account by account: what came in and from when, or that the bank had nothing.
  *  Each account opens its register. One sentence for all of them (176 imported · none at the
  *  bank for •••3555) was hard to read (owner, 2026-11-14). */
@@ -200,28 +189,61 @@ function importedDetail(a: BankSyncAccount, historyDays: number): string {
     .join(' · ')
 }
 
-/** What the import is doing, from its run record: the account being read (and how many of
- *  how many), then the booking. A bank can take a minute to send a long history. */
+/** What the import is doing, from its run record: every account with its own state (waiting,
+ *  reading, done with how many transactions), then the booking. */
 function ImportProgress({ run }: { run: BankSyncStatus['last_run'] }) {
   const progress = run?.progress
   const total = progress?.total ?? 0
-  let line = 'Starting…'
-  if (run?.phase === 'reading') {
-    const of = total > 1 ? ` · ${(progress?.done ?? 0) + 1} of ${total}` : ''
-    line = `Reading ${progress?.label || 'your account'} from the bank${of}`
-  } else if (run?.phase === 'booking') {
-    line = total ? `Booking ${total} ${total === 1 ? 'transaction' : 'transactions'}…` : 'Booking…'
-  }
+  const accounts = progress?.accounts ?? []
   return (
     <div className="bs-progress" role="status" aria-live="polite">
-      <p className="bs-progress-line">
-        <Loader2 size={13} className="bs-progress-spin" aria-hidden="true" />
-        {line}
-      </p>
+      {accounts.length > 0 ? (
+        // Every account on its own line, as it was, is, or will be read: one already read
+        // never vanishes from view (owner, 2026-11-14).
+        <ul className="bs-progress-accounts">
+          {accounts.map((a, i) => (
+            <li key={`${a.name}-${a.mask}-${i}`} className={`bs-progress-acct ${a.state}`}>
+              <ProgressMark state={a.state} />
+              <span className="bs-progress-name">
+                {a.name}
+                {a.mask && <span className="bs-acct-mask">{`•••${a.mask}`}</span>}
+              </span>
+              <span className="bs-progress-what">{accountState(a)}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="bs-progress-line">
+          <Loader2 size={13} className="bs-progress-spin" aria-hidden="true" />
+          Starting…
+        </p>
+      )}
+      {run?.phase === 'booking' && (
+        <p className="bs-progress-line">
+          <Loader2 size={13} className="bs-progress-spin" aria-hidden="true" />
+          {total ? `Booking ${total} ${total === 1 ? 'transaction' : 'transactions'}…` : 'Booking…'}
+        </p>
+      )}
       <div className="bs-progress-bar" aria-hidden="true">
         <span />
       </div>
       <p className="bs-note">A bank can take a minute to send a long history.</p>
     </div>
   )
+}
+
+function ProgressMark({ state }: { state: ImportAccountLine['state'] }) {
+  if (state === 'done') return <Check size={13} className="bs-progress-ok" aria-hidden="true" />
+  if (state === 'reading')
+    return <Loader2 size={13} className="bs-progress-spin" aria-hidden="true" />
+  return <span className="bs-progress-dot" aria-hidden="true" />
+}
+
+function accountState(a: ImportAccountLine): string {
+  if (a.state === 'reading') return 'Reading from the bank…'
+  if (a.state === 'waiting') return 'Waiting'
+  if (a.state === 'failed') return 'Couldn’t be read'
+  if (a.state === 'skipped') return 'Not read this time'
+  const n = a.rows ?? 0
+  return n ? `${n} ${n === 1 ? 'transaction' : 'transactions'}` : 'No transactions'
 }

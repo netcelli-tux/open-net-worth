@@ -6,7 +6,7 @@ import { detailOf, type RunSummary } from '../../imports/runs'
 // schedule, read budget and review list. Every read goes through the shared query cache; a write
 // here revalidates every bank-sync read.
 
-export type BankSyncMode = 'off' | 'data' | 'lucius'
+export type BankSyncMode = 'off' | 'data'
 
 /** Where setup stands: tick accounts → bring in history → turn the sync on → done. */
 export type BankSyncStage = 'accounts' | 'history' | 'sync' | 'done'
@@ -66,17 +66,10 @@ export interface BankSyncStatus {
   last_error: string | null
   running: boolean
   to_review: number
-  lucius_automations: { id: string; name: string; status: string }[]
   accounts?: BankSyncAccount[]
   /** How far back a first import reaches (the history the bank serves). */
   history_days?: number
   stage?: BankSyncStage
-}
-
-export interface ModeResult extends BankSyncStatus {
-  paused_automations: string[]
-  resumed_automation: string | null
-  needs_template: boolean
 }
 
 export type ReviewKind = 'modified' | 'vanished' | 'posted' | 'duplicate'
@@ -119,6 +112,12 @@ export interface BankRunCounts {
 
 const BASE = '/api/bank-sync'
 const isBankSyncKey = (key: string) => key.startsWith(BASE)
+
+/** Re-read every bank sync's status — after a link change made outside this page (the
+ *  connector's Accounts list), whose "Sync" line appears only once an account is linked. */
+export function refreshBankSyncs(): void {
+  invalidateQueryCache(isBankSyncKey)
+}
 
 async function readJson<T>(path: string, fallback: string): Promise<T | null> {
   const r = await authFetch(path)
@@ -191,16 +190,5 @@ export async function bankSyncSend<T = unknown>(
   return (await r.json()) as T
 }
 
-/** What a mode change did to the connector's Lucius Automation, in one line (or null). */
-export function modeNotice(result: ModeResult): string | null {
-  if (result.paused_automations.length > 0) {
-    const names = result.paused_automations.map((n) => `“${n}”`).join(', ')
-    const word = result.paused_automations.length === 1 ? 'Automation' : 'Automations'
-    return `Turned off the ${word} ${names}, so rows aren’t booked twice.`
-  }
-  // The switch already says on or off; only what it did to an Automation needs a word.
-  return null
-}
-
 /** Where a bank's sync lives: its page in Automations → Data Sync. */
-export const bankSyncSearch = (provider: string) => ({ view: 'sync', sync: `bank:${provider}` })
+export const bankSyncSearch = (provider: string) => ({ view: 'sync', sync: `bank-${provider}` })

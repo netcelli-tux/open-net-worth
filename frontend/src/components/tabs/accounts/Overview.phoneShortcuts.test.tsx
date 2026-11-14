@@ -4,7 +4,7 @@
 // think about logging spends is Accounts — so its ⋯ menu links there too.
 import { afterEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { Overview, type OverviewStats, type OverviewTotals } from './Overview'
+import { Overview, type OverviewTotals } from './Overview'
 
 afterEach(() => cleanup())
 
@@ -26,7 +26,6 @@ function renderOverview(onPhoneShortcuts?: () => void) {
       totals={totals}
       groups={[]}
       cashBalance={{ cleared: 0, uncleared: 0, total: 0 } as never}
-      stats={{ count: 0, review: 0 } as OverviewStats}
       baseCurrency="SGD"
       collapsed={false}
       onReopen={noop}
@@ -36,8 +35,6 @@ function renderOverview(onPhoneShortcuts?: () => void) {
       onManageCategories={noop}
       onImport={noop}
       onExport={noop}
-      onReview={noop}
-      onStartReview={noop}
       onShowUncleared={noop}
       onPhoneShortcuts={onPhoneShortcuts}
     />,
