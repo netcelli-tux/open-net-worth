@@ -8,6 +8,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { AccountHeader } from './AccountHeader'
+import { ReconcileStatus } from './ReconcileStatus'
 import { fromApiAccount } from './data'
 import type { ApiAccount } from './types'
 
@@ -26,36 +27,13 @@ const ACCOUNT = fromApiAccount({
 const noop = () => {}
 
 function renderHeader(onReconcile: (a: unknown, real: number) => void) {
-  render(
-    <AccountHeader
-      account={ACCOUNT}
-      dueInfo={null}
-      stats={null}
-      menuOpen={false}
-      setMenuOpen={noop}
-      collapsed={false}
-      onReopen={noop}
-      onAddTxn={noop}
-      onEdit={noop}
-      onArchive={noop}
-      onDelete={noop}
-      onManagePayees={noop}
-      onManageCategories={noop}
-      onImport={noop}
-      onExport={noop}
-      onReconcile={onReconcile}
-      onReview={noop}
-      onStartReview={noop}
-    />,
-  )
+  render(<ReconcileStatus account={ACCOUNT} onReconcile={onReconcile} />)
 }
 
 afterEach(cleanup)
 
 function openReconcile() {
-  const [trigger] = screen.getAllByText('Reconcile')
-  if (!trigger) throw new Error('Reconcile trigger not rendered')
-  fireEvent.click(trigger)
+  fireEvent.click(screen.getByRole('button', { name: 'Reconcile' }))
 }
 
 describe('Reconcile popover', () => {
@@ -80,11 +58,11 @@ describe('Reconcile popover', () => {
     expect(screen.getByText('In sync')).toBeTruthy()
   })
 
-  it('sits on the reconcile line beside the status, not in the header actions', () => {
+  it('sits beside the status it changes, in one group', () => {
     renderHeader(vi.fn())
     const trigger = screen.getByRole('button', { name: 'Reconcile' })
-    expect(trigger.closest('.acct-recon-line')).toBeTruthy()
-    expect(trigger.closest('.acct-head-actions')).toBeNull()
+    const group = trigger.closest('.acct-pair--reconcile')
+    expect(group?.textContent).toContain('Never reconciled')
   })
 
   it('Escape closes the popover without reconciling', () => {
@@ -102,7 +80,6 @@ describe('Reconcile popover', () => {
       <AccountHeader
         account={ACCOUNT}
         dueInfo={null}
-        stats={null}
         menuOpen
         setMenuOpen={setMenuOpen}
         collapsed={false}
@@ -115,9 +92,6 @@ describe('Reconcile popover', () => {
         onManageCategories={noop}
         onImport={noop}
         onExport={noop}
-        onReconcile={vi.fn()}
-        onReview={noop}
-        onStartReview={noop}
       />,
     )
     fireEvent.keyDown(document, { key: 'Escape' })
@@ -125,39 +99,18 @@ describe('Reconcile popover', () => {
   })
 })
 
-describe('reconcile line — monthly nudge', () => {
+describe('reconcile status — monthly nudge', () => {
   function renderWith(lastReconciled: string) {
     vi.useFakeTimers({ toFake: ['Date'] })
     vi.setSystemTime(new Date(2026, 9, 26, 12))
     const account = { ...ACCOUNT, lastReconciled }
-    render(
-      <AccountHeader
-        account={account}
-        dueInfo={null}
-        stats={null}
-        menuOpen={false}
-        setMenuOpen={noop}
-        collapsed={false}
-        onReopen={noop}
-        onAddTxn={noop}
-        onEdit={noop}
-        onArchive={noop}
-        onDelete={noop}
-        onManagePayees={noop}
-        onManageCategories={noop}
-        onImport={noop}
-        onExport={noop}
-        onReconcile={noop}
-        onReview={noop}
-        onStartReview={noop}
-      />,
-    )
+    render(<ReconcileStatus account={account} onReconcile={noop} />)
     vi.useRealTimers()
   }
 
   it('warns with the age once the last reconcile is over a month old', () => {
     renderWith('2026-08-09')
-    const line = document.querySelector('.acct-recon-line')?.textContent ?? ''
+    const line = document.querySelector('.acct-pair--reconcile')?.textContent ?? ''
     // The date stays; the age follows in parentheses — no "·" separator (owner, 2026-10-26).
     expect(line).toMatch(/Reconciled \S+ \(78 days ago\)/)
     expect(line).not.toContain('·')
@@ -168,6 +121,6 @@ describe('reconcile line — monthly nudge', () => {
   it('stays a plain check inside the month', () => {
     renderWith('2026-10-20')
     expect(screen.queryByText(/days ago/)).toBeNull()
-    expect(screen.getByText(/Reconciled/)).toBeTruthy()
+    expect(document.querySelector('.acct-pair--reconcile')?.textContent).toContain('Reconciled')
   })
 })

@@ -11,12 +11,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import {
-  Overview,
-  type OverviewCashBalance,
-  type OverviewStats,
-  type OverviewTotals,
-} from './Overview'
+import { Overview, type OverviewCashBalance, type OverviewTotals } from './Overview'
 
 afterEach(() => cleanup())
 
@@ -39,7 +34,6 @@ const totals: OverviewTotals = {
   loan: 0,
   liabilities: 0,
 }
-const stats: OverviewStats = { count: 0, review: 0 }
 const noop = vi.fn()
 
 function renderOverview(cashBalance: OverviewCashBalance) {
@@ -48,7 +42,6 @@ function renderOverview(cashBalance: OverviewCashBalance) {
       totals={totals}
       groups={[]}
       cashBalance={cashBalance}
-      stats={stats}
       baseCurrency="SGD"
       collapsed={false}
       onReopen={noop}
@@ -58,8 +51,6 @@ function renderOverview(cashBalance: OverviewCashBalance) {
       onManageCategories={noop}
       onImport={noop}
       onExport={noop}
-      onReview={noop}
-      onStartReview={noop}
       onShowUncleared={noop}
     />,
   )

@@ -173,7 +173,6 @@ describe('the account menu', () => {
       <AccountHeader
         account={CA_MONZO}
         dueInfo={null}
-        stats={null}
         menuOpen={true}
         setMenuOpen={noop}
         collapsed={false}
@@ -186,9 +185,6 @@ describe('the account menu', () => {
         onManageCategories={noop}
         onImport={noop}
         onExport={noop}
-        onReconcile={noop}
-        onReview={noop}
-        onStartReview={noop}
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: /Link to a bank account/ }))

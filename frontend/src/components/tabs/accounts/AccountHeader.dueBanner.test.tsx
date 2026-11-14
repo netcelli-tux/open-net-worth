@@ -52,7 +52,6 @@ function renderHeader(dueInfo: DueInfo | null) {
     <AccountHeader
       account={ACCOUNT}
       dueInfo={dueInfo}
-      stats={null}
       menuOpen={false}
       setMenuOpen={noop}
       collapsed={false}
@@ -65,9 +64,6 @@ function renderHeader(dueInfo: DueInfo | null) {
       onManageCategories={noop}
       onImport={noop}
       onExport={noop}
-      onReconcile={noop}
-      onReview={noop}
-      onStartReview={noop}
     />,
   )
 }

@@ -12,11 +12,13 @@ describe('Account header at narrow widths', () => {
     expect(header).not.toMatch(/<svg/)
   })
 
-  // Owner, 2026-10-26: the action sits beside the status it changes — on the reconcile line,
-  // at every width — not as a header button that folds into the ⋯ menu.
-  it('keeps Reconcile on the reconcile line, not the header or the ⋯ menu', () => {
+  // Owner, 2026-10-26: the action sits beside the status it changes, at every width — not as a
+  // header button that folds into the ⋯ menu. A total account's is on its value footer; every
+  // other account's is in the register toolbar (ReconcileStatus).
+  it('keeps Reconcile beside its status, not the header or the ⋯ menu', () => {
     expect(header).not.toMatch(/menuTrigger/)
-    expect(header.match(/<ReconcilePopover /g)).toHaveLength(1)
+    expect(header.match(/<ReconcilePopover\b/g)).toHaveLength(1)
+    expect(read('ReconcileStatus.tsx').match(/<ReconcilePopover\b/g)).toHaveLength(1)
     expect(css).not.toMatch(/acct-head-reconcile|acct-pop-wrap--menu/)
     expect(css).toMatch(/\.acct-pop-wrap--line \.acct-pop\s*\{[^}]*left: 0/)
     // …and on a narrow column it hangs from the line's right edge so it can't run off screen.

@@ -7,7 +7,7 @@
  * No API calls here.
  */
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, type ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useBreakpoint } from '../../../hooks/useBreakpoint'
 import { useSheetDragToDismiss } from '../../../hooks/useSheetDragToDismiss'
@@ -751,6 +751,8 @@ export interface FiltersProps {
   /** Whether hidden transactions are listed — a row toggle in the same picker. */
   showHidden: boolean
   onToggleShowHidden: () => void
+  /** Register actions beside the search — reconcile status and the review queue. */
+  actions?: ReactNode
 }
 
 export function Filters({
@@ -768,6 +770,7 @@ export function Filters({
   columnVis,
   showHidden,
   onToggleShowHidden,
+  actions,
 }: FiltersProps) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
@@ -923,6 +926,7 @@ export function Filters({
         suggest={suggest}
         sym={sym}
       />
+      {actions}
       <div className="acct-advwrap" ref={ref}>
         <button
           className={'acct-advbtn acct-viewbtn' + (dateActive ? ' on' : '')}

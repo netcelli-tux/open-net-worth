@@ -6,7 +6,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 
-import { AccountHeader } from './AccountHeader'
+import { AccountHeader, hasTotalFooter } from './AccountHeader'
 import { fromApiAccount } from './data'
 import type { Account, ApiAccount, ApiValueSync } from './types'
 import { setBaseCurrency } from '../../../utils/format'
@@ -93,7 +93,6 @@ function renderHeader(account: Account, over: Partial<Parameters<typeof AccountH
     <AccountHeader
       account={account}
       dueInfo={null}
-      stats={null}
       menuOpen={false}
       setMenuOpen={noop}
       collapsed={false}
@@ -105,8 +104,6 @@ function renderHeader(account: Account, over: Partial<Parameters<typeof AccountH
       onManageCategories={noop}
       onImport={noop}
       onExport={noop}
-      onReview={noop}
-      onStartReview={noop}
       {...handlers}
       {...over}
     />,
@@ -167,7 +164,8 @@ describe('which card an account gets (UI-01 / UI-02 / FLAG-12)', () => {
     expect(screen.getByText('Uncleared')).toBeTruthy()
     expect(screen.getByText('Working balance')).toBeTruthy()
     expect(screen.queryByText('Total value')).toBeNull()
-    expect(screen.getByText('Never reconciled')).toBeTruthy()
+    // Its reconcile lives in the register toolbar (ReconcileStatus), like a cash account's.
+    expect(hasTotalFooter(acct({}, 0))).toBe(false)
     expect(screen.queryByRole('button', { name: 'Add holding' })).toBeNull()
   })
 
@@ -192,16 +190,14 @@ describe('which card an account gets (UI-01 / UI-02 / FLAG-12)', () => {
     expect(screen.queryByText(/Value synced|Value you entered/)).toBeNull()
   })
 
-  it('a Live holdings account is Holdings + Cash and keeps the old reconcile line', () => {
-    const { view } = renderHeader(
-      acct({ value_source: 'holdings', balance: 500, balance_base: 500 }, 3020),
-    )
+  it('a Live holdings account is Holdings + Cash and reconciles its balance from the toolbar', () => {
+    const live = acct({ value_source: 'holdings', balance: 500, balance_base: 500 }, 3020)
+    const { view } = renderHeader(live)
     expect(
       [...view.container.querySelectorAll('.acct-bal-part')].map((p) => p.textContent),
     ).toEqual(['$3,020.00Holdings', '$500.00Cash', '$3,520.00Total value'])
-    expect(screen.getByText('Never reconciled')).toBeTruthy()
-    fireEvent.click(reconcileTrigger())
-    expect(popover()).toContain('Is the real balance')
+    expect(hasTotalFooter(live)).toBe(false)
+    expect(screen.queryByText('Never reconciled')).toBeNull()
   })
 })
 

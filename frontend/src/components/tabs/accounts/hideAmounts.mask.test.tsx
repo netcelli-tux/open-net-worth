@@ -8,6 +8,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { AccountHeader, type DueInfo } from './AccountHeader'
+import { ReconcileStatus } from './ReconcileStatus'
 import { fromApiAccount } from './data'
 import TxnDetail from './TxnDetail'
 import { TxnCard } from './TxnCard'
@@ -245,7 +246,6 @@ describe('Hide amounts covers the account header', () => {
       <AccountHeader
         account={card}
         dueInfo={dueInfo}
-        stats={null}
         menuOpen={false}
         setMenuOpen={noop}
         collapsed={false}
@@ -258,9 +258,6 @@ describe('Hide amounts covers the account header', () => {
         onManageCategories={noop}
         onImport={noop}
         onExport={noop}
-        onReconcile={noop}
-        onReview={noop}
-        onStartReview={noop}
       />,
     )
   }
@@ -304,14 +301,14 @@ describe('Hide amounts covers the account header', () => {
   })
 
   it('masks the balance the reconcile prompt asks about', () => {
-    renderHeader(due)
+    render(<ReconcileStatus account={card} onReconcile={noop} />)
     fireEvent.click(screen.getByRole('button', { name: 'Reconcile' }))
     expect(screen.getByRole('dialog').textContent).toContain('45.20')
     expect(unmaskedMoney(screen.getByRole('dialog'))).toEqual([])
   })
 
   it('masks the reconcile adjustment, but not "In sync"', () => {
-    renderHeader(due)
+    render(<ReconcileStatus account={card} onReconcile={noop} />)
     fireEvent.click(screen.getByRole('button', { name: 'Reconcile' }))
     fireEvent.click(screen.getByText('No'))
     const input = screen.getByPlaceholderText('actual')
