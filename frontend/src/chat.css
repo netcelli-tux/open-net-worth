@@ -2818,8 +2818,7 @@
 }
 @media (hover: hover) {
   .wr-row:hover {
-    /* --hover never existed (fallback always fired) — theme-safe ink-mix hover. */
-    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    background: var(--hover);
   }
 }
 /* The operation glyph sits BESIDE the chip, never inside it — that is what keeps the chip

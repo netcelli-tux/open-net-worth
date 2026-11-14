@@ -2460,7 +2460,7 @@ body.hide-amounts .mask * {
     color: var(--ink);
   }
   .cmdk-item.active {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    background: var(--selected);
   }
   .cmdk-item-label {
     font-size: var(--text-base);
@@ -3396,7 +3396,7 @@ body.hide-amounts .mask * {
   @media (hover: hover) {
     .onb-choice-card:hover {
       border-color: var(--hover-line);
-      background: color-mix(in srgb, var(--ink) 4%, var(--surface2, #1a1f2a));
+      background: var(--hover-surface2);
     }
   }
   .onb-choice-card.is-selected {
@@ -3612,7 +3612,7 @@ body.hide-amounts .mask * {
   }
   @media (hover: hover) {
     .briefing-toggle:hover {
-      background: color-mix(in srgb, var(--ink) 6%, var(--surface2));
+      background: var(--hover-surface2);
     }
   }
   .briefing-toggle input {
@@ -3903,11 +3903,11 @@ body.hide-amounts .mask * {
     z-index: var(--z-sticky);
   }
   .acct-list-resize-handle:active {
-    background: color-mix(in srgb, var(--ink) 25%, transparent);
+    background: color-mix(in srgb, var(--accent) 60%, transparent);
   }
   @media (hover: hover) {
     .acct-list-resize-handle:hover {
-      background: color-mix(in srgb, var(--ink) 25%, transparent);
+      background: color-mix(in srgb, var(--accent) 60%, transparent);
     }
   }
   .acct-list-toggle {
@@ -4446,7 +4446,7 @@ body.hide-amounts .mask * {
     }
   }
   .acct-txn-row.selected {
-    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    background: var(--selected);
   }
   .acct-txn-check {
     display: flex;
@@ -6759,7 +6759,7 @@ body.hide-amounts .mask * {
   @media (hover: hover) {
     .ui-password__toggle:hover {
       color: var(--ink);
-      background: color-mix(in srgb, var(--ink) 7%, transparent);
+      background: var(--hover);
     }
   }
   .ui-password__toggle:disabled {

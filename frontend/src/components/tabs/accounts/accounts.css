@@ -1128,7 +1128,7 @@
 }
 @media (hover: hover) {
   .acct-side-resize:hover {
-    background: color-mix(in srgb, var(--ink) 25%, transparent);
+    background: color-mix(in srgb, var(--accent) 60%, transparent);
   }
 }
 .acct-side-collapse {
@@ -3360,7 +3360,7 @@
 }
 @media (hover: hover) {
   .acct-chip-x:hover {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    background: var(--hover);
     color: var(--ink);
   }
 } /* --surface3 never existed — theme-safe ink-mix */
@@ -3702,7 +3702,7 @@
   }
 }
 .acct-tr.sel {
-  background: color-mix(in srgb, var(--ink) 8%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface));
 }
 .acct-tr:last-child {
   border-bottom: none;
@@ -4738,7 +4738,7 @@ select.acct-addin {
   }
 }
 .acct-reg.overflow:not(.cards) .acct-tr.sel .acct-td-amt {
-  background: color-mix(in srgb, var(--ink) 8%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface));
 }
 /* While the register scrolls sideways the Source column (home of the Review pill) can sit out of
    view, so a row that needs review also keeps a dot beside its amount — the one cell always in
@@ -4948,7 +4948,7 @@ select.acct-addin {
   }
 }
 .acct-card.sel {
-  background: color-mix(in srgb, var(--ink) 8%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface));
 }
 .acct-card.needs-review {
   box-shadow: inset 2px 0 0 var(--warn, #e0a032);
@@ -7778,7 +7778,7 @@ select.acct-addin {
 }
 @media (hover: hover) {
   .acct-detail-resize:hover::after {
-    background: color-mix(in srgb, var(--ink) 25%, transparent);
+    background: color-mix(in srgb, var(--accent) 60%, transparent);
   }
 }
 @keyframes acct-detail-slide {
@@ -8375,7 +8375,7 @@ select.acct-addin {
 }
 @media (hover: hover) {
   .acct-detail-hide:hover:not([disabled]) {
-    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    background: var(--hover);
   }
 }
 .acct-detail-del:disabled {

@@ -1464,7 +1464,7 @@
 }
 @media (hover: hover) {
   .onw-settings .rd-mem-topic:hover {
-    background: color-mix(in srgb, var(--ink) 5%, transparent);
+    background: var(--hover);
     border-radius: var(--radius-lg);
   }
 }
@@ -1702,7 +1702,7 @@
 }
 @media (hover: hover) {
   .onw-settings .rd-fact-ibtn:hover {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    background: var(--hover);
     color: var(--ink);
   }
   .onw-settings .rd-fact-ibtn--forget:hover {
