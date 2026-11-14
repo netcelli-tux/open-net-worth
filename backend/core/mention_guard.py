@@ -42,6 +42,7 @@ MENTION_FORBIDDEN_STORES: frozenset[str] = frozenset(
         "AlpacaConfigStore",
         "ChannelConfigStore",
         "LunchFlowConfigStore",
+        "LunchFlowPersonalConfigStore",
         "MarketDataConfigStore",
         "McpClientStore",
         "RestConfigStore",

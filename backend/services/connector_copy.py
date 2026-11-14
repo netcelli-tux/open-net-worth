@@ -221,6 +221,23 @@ TOOLS: dict[str, list[ConnectorTool]] = {
             read_only=True,
         ),
     ],
+    "lunch_flow_personal": [
+        _t(
+            "lunch_flow_personal_get_status",
+            "Read the Lunch Flow Personal connector status and sync stats.",
+        ),
+        _t(
+            "lunch_flow_personal_fetch_transactions",
+            "Fetch new Lunch Flow Personal transactions for a date window; nothing is booked.",
+            read_only=True,
+        ),
+        _t(
+            "lunch_flow_personal_list_accounts",
+            "List the Lunch Flow Personal accounts and which of yours each is linked to; "
+            "no transactions.",
+            read_only=True,
+        ),
+    ],
     "ynab": [
         _t("ynab_get_status", "Read the YNAB connector status and sync stats."),
         _t(
@@ -378,6 +395,7 @@ SHORT: dict[str, str] = {
     "plaid": "Bank and card accounts from the US and Canada.",
     "lunch_money": "Transactions already aggregated in your Lunch Money account.",
     "lunch_flow": "Bank and investment accounts across 30+ countries, via OAuth.",
+    "lunch_flow_personal": "Your own Lunch Flow bank accounts, with one API key.",
     "ynab": "Transactions already tracked in your YNAB budget.",
     "actual_budget": "Import a budget from your Actual server and keep it in step.",
     "enable_banking": "Bank accounts from the EU and UK, under PSD2.",
@@ -477,6 +495,12 @@ LONG: dict[str, str] = {
         "across 30+ countries. Needs a Lunch Flow developer client_id/secret pair (from "
         "lunchflow.app's own dashboard) configured first. Each sync pulls what's new by "
         "account, and anything already imported is skipped."
+    ),
+    "lunch_flow_personal": (
+        "If you already link your banks in Lunch Flow, create an API destination in its "
+        "dashboard and paste the API key here — accounts and transactions flow into your "
+        "ledger from then on, with no developer app or OAuth sign-in. Pending transactions "
+        "are left out until they post, and anything already imported is skipped."
     ),
     "ynab": (
         "If you already track spending in YNAB, paste a personal access token from its "

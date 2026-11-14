@@ -21,8 +21,7 @@ A new book starts with a set of everyday spending categories. Change them freely
 
 Open **Manage categories** from any of these places:
 
-- **Accounts** — the header, next to **Manage payees** (on a narrow screen or phone, in the
-  **⋯** menu).
+- **Accounts** — the header’s **⋯** menu, next to **Manage payees**.
 - **Plan › Budget** — the **⋯** beside the method button (on a phone, the **⋯** at the top of
   Plan).
 
@@ -60,7 +59,7 @@ If you just want it out of the way, **Hide** it instead — deleting rewrites hi
 
 ## Manage payees
 
-Open **Manage payees** from the **Accounts** header (or **⋯** menu), or from the bottom of any
+Open **Manage payees** from the **⋯** menu in the **Accounts** header, or from the bottom of any
 transaction's payee picker. Pick a payee on the left to edit it. Changes save automatically.
 
 ### Fill in a category automatically

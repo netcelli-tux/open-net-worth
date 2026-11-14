@@ -50,6 +50,7 @@ def test_empty_state_has_builtin_transports_no_mcp():
         "plaid",
         "lunch_money",
         "lunch_flow",
+        "lunch_flow_personal",
         "ynab",
         "enable_banking",
         "gocardless",
@@ -1069,6 +1070,11 @@ def test_native_views_carry_descriptions_and_known_tool_names():
             "lunch_flow_get_status",
             "lunch_flow_fetch_transactions",
             "lunch_flow_list_accounts",
+        ],
+        "lunch_flow_personal": [
+            "lunch_flow_personal_get_status",
+            "lunch_flow_personal_fetch_transactions",
+            "lunch_flow_personal_list_accounts",
         ],
         "ynab": [
             "ynab_get_status",

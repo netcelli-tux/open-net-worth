@@ -154,6 +154,7 @@ from backend.api.ledger import router as ledger_router
 from backend.api.logs import router as logs_router
 from backend.api.lots import router as lots_router
 from backend.api.lunch_flow_api import router as lunch_flow_router
+from backend.api.lunch_flow_personal_api import router as lunch_flow_personal_router
 from backend.api.lunch_money_api import router as lunch_money_router
 from backend.api.market_data_api import router as market_data_router
 from backend.api.market_data_qa_api import router as market_data_qa_router
@@ -1199,6 +1200,7 @@ app.include_router(search_config_router)
 app.include_router(simplefin_router)
 app.include_router(plaid_router)
 app.include_router(lunch_flow_router)
+app.include_router(lunch_flow_personal_router)
 app.include_router(enable_banking_router)
 app.include_router(gocardless_router)
 app.include_router(alpaca_router)

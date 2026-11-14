@@ -50,6 +50,7 @@ const PRESENTATION: Record<string, { icon: string; hue: string }> = {
   actual_budget: { icon: 'accounts', hue: 'var(--accent)' },
   plaid: { icon: 'accounts', hue: 'var(--crypto)' },
   lunch_flow: { icon: 'accounts', hue: 'var(--good)' },
+  lunch_flow_personal: { icon: 'accounts', hue: 'var(--good)' },
   enable_banking: { icon: 'accounts', hue: 'var(--cash-c)' },
   gocardless: { icon: 'accounts', hue: 'var(--recv)' },
   yodlee: { icon: 'accounts', hue: 'var(--good)' },
@@ -85,6 +86,7 @@ const DEVELOPERS: Record<string, { name: string; url: string }> = {
   plaid: { name: 'Plaid Inc.', url: 'https://plaid.com/docs/link/' },
   lunch_money: { name: 'Lunch Money', url: 'https://lunchmoney.app' },
   lunch_flow: { name: 'Lunch Flow', url: 'https://lunchflow.app' },
+  lunch_flow_personal: { name: 'Lunch Flow', url: 'https://lunchflow.app' },
   ynab: { name: 'YNAB', url: 'https://www.ynab.com' },
   actual_budget: { name: 'Actual Budget', url: 'https://actualbudget.org' },
   enable_banking: {
@@ -135,6 +137,10 @@ const PROMPTS: Record<string, string[]> = {
   email: ['Reparse last month’s statements', 'Send this week’s digest now'],
   plaid: ['Reconnect my bank account', 'Show all accounts linked through Plaid'],
   lunch_flow: ['Sync my Lunch Flow accounts now', 'Show accounts linked through Lunch Flow'],
+  lunch_flow_personal: [
+    'Fetch my Lunch Flow transactions',
+    'Show accounts linked through Lunch Flow Personal',
+  ],
   enable_banking: ['Sync my EU bank accounts', 'Show accounts linked through Enable Banking'],
   gocardless: ['Fetch my GoCardless transactions', 'Show accounts linked through GoCardless'],
   yodlee: ['Sync my Yodlee accounts now', 'Show all accounts linked through Yodlee'],

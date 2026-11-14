@@ -147,6 +147,7 @@ READ_ONLY_TOOLS = frozenset(
         "plaid_get_status",
         "lunch_money_get_status",
         "lunch_flow_get_status",
+        "lunch_flow_personal_get_status",
         "ynab_get_status",
         "enable_banking_get_status",
         "gocardless_get_status",
@@ -160,6 +161,7 @@ READ_ONLY_TOOLS = frozenset(
         "plaid_list_accounts",
         "lunch_money_list_accounts",
         "lunch_flow_list_accounts",
+        "lunch_flow_personal_list_accounts",
         "ynab_list_accounts",
         # YNAB's plan reads (ai/tools/ynab.py): live GETs through services.aggregation.
         # ynab_plan, which records no status and writes nothing, here or in YNAB.

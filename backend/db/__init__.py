@@ -9,6 +9,7 @@ from .gocardless_config_store import GoCardlessConfigStore
 from .ibkr_config_store import IbkrConfigStore
 from .instrument_store import InstrumentStore
 from .intel_stories_store import IntelStoriesStore
+from .lunch_flow_personal_config_store import LunchFlowPersonalConfigStore
 from .lunch_money_config_store import LunchMoneyConfigStore
 from .memory_settings_store import MemorySettingsStore
 from .memory_store import MemoryStore
@@ -39,6 +40,7 @@ __all__ = [
     "GoCardlessConfigStore",
     "IbkrConfigStore",
     "InstrumentStore",
+    "LunchFlowPersonalConfigStore",
     "LunchMoneyConfigStore",
     "PlaidConfigStore",
     "PositionStore",

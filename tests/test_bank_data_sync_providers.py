@@ -56,6 +56,8 @@ def test_the_config_is_all_that_differs():
     assert not any(
         PROVIDERS[k].data_sync for k in ("simplefin", "lunch_flow", "lunch_money", "ynab", "alpaca")
     )
+    lfp = PROVIDERS["lunch_flow_personal"]
+    assert (lfp.data_sync, lfp.sync_interval_hours, lfp.daily_reads) == (True, 6, None)
 
 
 # ── Enable Banking ──────────────────────────────────────────────────────────────────
@@ -215,3 +217,51 @@ def test_a_pending_row_that_posts_at_another_amount_waits_for_review(plaid):
     assert row["from_amount"] == pytest.approx(36.0)
     assert "pl-chk:post-1" in {e["ref"] for e in row["external_refs"]}
     assert _run_plaid()["counts"]["booked"] == 0
+
+
+# ── Lunch Flow Personal ─────────────────────────────────────────────────────────────
+
+
+def test_lunch_flow_personal_syncs_through_its_real_adapter(db_isolated, monkeypatch):
+    """The real fetch_window, HTTP faked at httpx: rows book once, and the balance read
+    with them reaches the sync."""
+    import httpx
+
+    from backend.db import LunchFlowPersonalConfigStore
+    from backend.services.aggregation import lunch_flow_personal as lfp_svc
+
+    monkeypatch.setattr(ledger_service, "base_currency", lambda: "GBP")
+    LunchFlowPersonalConfigStore().update({"api_key": "lfp-key", "enabled": True})
+    txns = [
+        {"id": "t1", "amount": -12.5, "currency": "GBP", "date": days_ago(3), "merchant": "ACME"},
+        {"id": "t2", "amount": 900.0, "currency": "GBP", "date": days_ago(2), "merchant": "ACME"},
+    ]
+
+    def fake_get(url, params=None, headers=None, timeout=None):
+        assert headers["x-api-key"] == "lfp-key"
+        if url.endswith("/balance"):
+            body = {"balance": {"amount": 1387.5, "currency": "GBP"}}
+        elif url.endswith("/transactions"):
+            body = {"transactions": txns, "total": len(txns)}
+        else:
+            body = {"accounts": [{"id": 7, "name": "ACME Current", "currency": "GBP"}]}
+        return httpx.Response(200, json=body, request=httpx.Request("GET", url))
+
+    monkeypatch.setattr(lfp_svc.httpx, "get", fake_get)
+    account = _account("lunch_flow_personal", "7", "GBP")
+    settings.save("lunch_flow_personal", mode="data")
+    p = PROVIDERS["lunch_flow_personal"]
+
+    result = runner.run_now(p, "manual", runner.opted_accounts("lunch_flow_personal"))
+
+    assert result["counts"]["booked"] == 2
+    assert sorted(t["kind"] for t in _live(account)) == ["expense", "income"]
+    assert (
+        runner.run_now(p, "manual", runner.opted_accounts("lunch_flow_personal"))["counts"][
+            "booked"
+        ]
+        == 0
+    )
+    from backend.services.bank_data_sync import balances
+
+    assert balances.stored("lunch_flow_personal")[account]["amount"] == 1387.5
