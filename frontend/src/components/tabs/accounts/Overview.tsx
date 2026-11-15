@@ -183,7 +183,7 @@ export function Overview({
               <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add account
             </span>
           </Button>
-          <Button size="sm" onClick={onAddTxn}>
+          <Button size="sm" variant="primary" onClick={onAddTxn}>
             <span className="acct-btn-ico">
               <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add transaction
             </span>

@@ -499,7 +499,7 @@ export function AccountHeader({
         </div>
 
         <div className="acct-head-actions">
-          <Button size="sm" onClick={onAddTxn}>
+          <Button size="sm" variant="primary" onClick={onAddTxn}>
             <span className="acct-btn-ico">
               <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add transaction
             </span>
