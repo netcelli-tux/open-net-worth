@@ -743,7 +743,6 @@ export interface FiltersProps {
   clearTokens: () => void
   setPreset: (v: string) => void
   setCustom: (key: 'cfM' | 'cfY' | 'ctM' | 'ctY', value: number) => void
-  onAddTxn: () => void
   /** All-accounts view — decides whether the `account` column is offered in the picker. */
   showAccount: boolean
   /** Register column-visibility model (see columns.tsx). */
@@ -765,7 +764,6 @@ export function Filters({
   clearTokens,
   setPreset,
   setCustom,
-  onAddTxn,
   showAccount,
   columnVis,
   showHidden,
@@ -1012,11 +1010,6 @@ export function Filters({
         showHidden={showHidden}
         onToggleShowHidden={onToggleShowHidden}
       />
-      <button className="acct-filter-add" onClick={onAddTxn} aria-label="Add transaction">
-        <IconPlus size={12} />
-        <span className="acct-filter-add-full">Add transaction</span>
-        <span className="acct-filter-add-short">Add</span>
-      </button>
     </div>
   )
 }
