@@ -92,10 +92,9 @@ export const tokenGroups = [
       ['lucius', '#7C6CF5'],
       ['act-teal', '#22b8cf', '#0d7f92'],
       ['accent', 'var(--primary)'],
-      // The main call to action is INK, not blue: near-black on a light page, near-white on
-      // dark. Blue (--primary/--accent) stays for links, focus and info; CTA ≠ selection ≠ link.
-      ['cta', 'var(--ink)'],
-      ['cta-hover', 'color-mix(in srgb, var(--ink) 86%, var(--bg))'],
+      // The main call to action is the instance accent (Settings → Appearance).
+      ['cta', 'var(--accent)'],
+      ['cta-hover', 'color-mix(in srgb, var(--accent) 86%, var(--ink))'],
       ['text', 'var(--ink)'],
       ['card', 'var(--surface2)'],
       ['border', 'var(--line)'],
@@ -300,7 +299,7 @@ export const tokenGroups = [
     category: 'color',
     tokens: [
       ['ink-on-accent', '#fff'],
-      ['ink-on-cta', 'var(--bg)'],
+      ['ink-on-cta', 'var(--ink-on-accent)'],
     ],
   },
   {

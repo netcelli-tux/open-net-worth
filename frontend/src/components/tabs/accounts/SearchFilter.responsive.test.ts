@@ -28,7 +28,6 @@ describe('Accounts filter toolbar responsive contract', () => {
     expect(narrow).toMatch(
       /\.acct-filters \.acct-viewlbl,\s*\.acct-filters \.acct-viewcaret \{\s*display: none;/,
     )
-    expect(narrow).not.toMatch(/\.acct-filter-add\s*\{[^}]*display:\s*none/)
     expect(narrow).toMatch(/\.acct-searchwrap \.acct-search \{\s*min-width: 0;/)
     expect(css).not.toMatch(/@media \(max-width: 960px\) \{\s*\.acct-filters \{/)
   })
@@ -38,14 +37,4 @@ describe('Accounts filter toolbar responsive contract', () => {
     expect(source).toContain('title={`Date range: ${dateLabel}`}')
   })
 
-  it('shortens the add transaction label to Add when the column is narrow', () => {
-    const narrow = narrowBlock()
-
-    expect(source).toContain('aria-label="Add transaction"')
-    expect(source).toContain('<span className="acct-filter-add-full">Add transaction</span>')
-    expect(source).toContain('<span className="acct-filter-add-short">Add</span>')
-    expect(css).toMatch(/\n\.acct-filter-add-short \{\s*display: none;/)
-    expect(narrow).toMatch(/\.acct-filter-add-full \{\s*display: none;/)
-    expect(narrow).toMatch(/\.acct-filter-add-short \{\s*display: inline;/)
-  })
 })

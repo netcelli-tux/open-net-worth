@@ -24,6 +24,7 @@ import {
   Link2,
   MoreHorizontal,
   Pencil,
+  Plus,
   SquarePen,
   Tags,
   Trash2,
@@ -356,6 +357,7 @@ export function AccountHeader({
   onReopen,
   onReopenHover,
   onReopenLeave,
+  onAddTxn,
   onEdit,
   onArchive,
   onDelete,
@@ -497,6 +499,11 @@ export function AccountHeader({
         </div>
 
         <div className="acct-head-actions">
+          <Button size="sm" onClick={onAddTxn}>
+            <span className="acct-btn-ico">
+              <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add transaction
+            </span>
+          </Button>
           <div className="acct-menu-wrap" ref={menuRef}>
             <button
               className="btn-ghost-icon"

@@ -51,7 +51,6 @@ function renderFilters() {
       clearTokens={() => {}}
       setPreset={() => {}}
       setCustom={() => {}}
-      onAddTxn={() => {}}
       showAccount={false}
       columnVis={columnVis}
       showHidden={false}

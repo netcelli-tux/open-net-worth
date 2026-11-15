@@ -22,7 +22,7 @@ or just by telling Lucius: *"I paid $42.80 for dinner at Nando's on my Visa yest
 ## Add a transaction
 
 1. Open **Accounts** and pick the account in the list.
-2. Click **Add transaction** (beside the search box above the register).
+2. Click **Add transaction** (top right of the page, beside **Add account**).
 3. Fill in the row:
    - **Date**.
    - **Payee** — start typing a name. To record a **transfer**, pick **To/From** *another

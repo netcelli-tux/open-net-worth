@@ -2852,36 +2852,6 @@
     display: none;
   }
 }
-.acct-filter-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 29px;
-  box-sizing: border-box;
-  padding: 0 14px;
-  border-radius: var(--radius-lg);
-  background: var(--cta);
-  border: 1px solid var(--cta);
-  color: var(--ink-on-cta);
-  font: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  flex: none;
-  white-space: nowrap;
-  transition: background 0.12s;
-}
-@media (hover: hover) {
-  .acct-filter-add:hover {
-    background: var(--cta-hover);
-  }
-}
-.acct-filter-add svg {
-  flex: none;
-}
-.acct-filter-add-short {
-  display: none;
-}
 /* Register actions beside the search — one joined control each, the toolbar's 29px height:
    a status half (the review count, the reconcile date) and an action half. ReviewStrip,
    ReconcileStatus. No overflow clip: the reconcile popover hangs below it. */
@@ -2996,12 +2966,6 @@
   .acct-filters .acct-viewlbl,
   .acct-filters .acct-viewcaret {
     display: none;
-  }
-  .acct-filter-add-full {
-    display: none;
-  }
-  .acct-filter-add-short {
-    display: inline;
   }
   .acct-pair-lbl {
     display: none;

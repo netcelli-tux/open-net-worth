@@ -122,6 +122,7 @@ export function Overview({
   onReopen,
   onReopenHover,
   onReopenLeave,
+  onAddTxn,
   onAdd,
   onManagePayees,
   onManageCategories,
@@ -180,6 +181,11 @@ export function Overview({
           <Button size="sm" variant="secondary" onClick={onAdd} data-tour="setup-accounts">
             <span className="acct-btn-ico">
               <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add account
+            </span>
+          </Button>
+          <Button size="sm" onClick={onAddTxn}>
+            <span className="acct-btn-ico">
+              <Plus size={14} strokeWidth={2} aria-hidden="true" /> Add transaction
             </span>
           </Button>
           <div className="acct-menu-wrap" ref={menuRef}>

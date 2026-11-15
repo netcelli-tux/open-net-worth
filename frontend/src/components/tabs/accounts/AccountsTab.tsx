@@ -2221,7 +2221,6 @@ export function AccountsTab({
                     clearTokens={clearTokens}
                     setPreset={setPreset}
                     setCustom={setCustom}
-                    onAddTxn={handleAddTxn}
                     showAccount={showAccount}
                     columnVis={columnVis}
                     showHidden={showHidden}
