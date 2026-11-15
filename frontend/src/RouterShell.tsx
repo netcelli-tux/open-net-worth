@@ -40,10 +40,7 @@ import {
   ChevronRight,
   Menu,
   Search,
-  Bug,
   Info,
-  Eye,
-  EyeOff,
   NAV_ICON_PROPS,
 } from './ui/icons'
 import { Spark } from './lucius/identity'
@@ -127,13 +124,13 @@ import { behindFirstRunProps } from './components/firstrun/behindFirstRun'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { BootUnreachable } from './components/BootUnreachable'
 import { useBrand } from './brand-context'
+import { SidebarUserMenu } from './components/SidebarUserMenu'
 import { fDateTime, setBaseCurrency, setDisplayFormats } from './utils/format'
 import {
   TABS,
   type TabId,
   type MobileNavTarget,
   PRIMARY_TABS,
-  CONFIG_TABS,
   TAB_LABELS,
   TAB_DISPLAY_NAMES,
   NARROW_TABS,
@@ -1312,11 +1309,6 @@ function RouterShellInner() {
       <div className="sidebar-nav">
         {/* Zone 1 — your money */}
         {PRIMARY_TABS.map(renderNavItem)}
-
-        <div className="sidebar-divider" />
-
-        {/* Zone 2 — you + your assistant */}
-        {CONFIG_TABS.map(renderNavItem)}
       </div>
       {/* Utilities, pinned to the bottom. Moved off the topbar so the price ticker
           gets the whole row (owner, 2026-08-24). They are app-wide actions, not
@@ -1342,40 +1334,21 @@ function RouterShellInner() {
             ['Mod', 'K'],
           )}
           {railTip(
-            <button
-              className="sidebar-item"
-              onClick={togglePrivacy}
-              aria-label={hidden ? 'Show amounts' : 'Hide amounts'}
-            >
-              <span className="sidebar-icon">
-                {/* The icon is the current STATE (the collapsed rail has no label to say
-                    which action it is) — the label and tooltip carry the action. */}
-                {hidden ? (
-                  <EyeOff size={16} strokeWidth={1.6} aria-hidden="true" />
-                ) : (
-                  <Eye size={16} strokeWidth={1.6} aria-hidden="true" />
-                )}
-              </span>
-              <span className="sidebar-label">{hidden ? 'Show amounts' : 'Hide amounts'}</span>
-              {/* Bare `h` toggles privacy (see the keydown handler above) — advertise
-                it the same way Search advertises ⌘K. */}
-              <kbd className="sidebar-kbd">H</kbd>
-            </button>,
-            hidden ? 'Show amounts' : 'Hide amounts',
-            ['H'],
-          )}
-          {railTip(
-            <button
-              className="sidebar-item"
-              onClick={() => openReportProblem()}
-              aria-label="Send feedback"
-            >
-              <span className="sidebar-icon">
-                <Bug size={16} strokeWidth={1.6} aria-hidden="true" />
-              </span>
-              <span className="sidebar-label">Send feedback</span>
-            </button>,
-            'Send feedback',
+            <SidebarUserMenu
+              name={profileData?.name}
+              activeTab={activeTab}
+              amountsHidden={hidden}
+              onTogglePrivacy={togglePrivacy}
+              onGo={(t) => {
+                goTo(t)
+                setDrawerOpen(false)
+                peek.close()
+              }}
+              onFeedback={() => openReportProblem()}
+              connectorsAttention={connectorsAttention}
+              connectorsSignInOnly={connectorsSignInOnly}
+            />,
+            'Account menu',
           )}
         </div>
       )}

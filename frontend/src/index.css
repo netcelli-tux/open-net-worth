@@ -579,6 +579,42 @@
     margin: 8px 0;
   }
 
+  /* Account menu (SidebarUserMenu): the footer row that holds privacy, setup surfaces and
+     feedback. A full-width sidebar-item; ActionMenu's wrapper must not shrink it. */
+  .sidebar-user-wrap {
+    display: block;
+  }
+  .sidebar-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .sidebar .sidebar-avatar svg {
+    width: 13px;
+    height: 13px;
+  }
+  .sidebar-user-name {
+    min-width: 0;
+    text-overflow: ellipsis;
+    color: var(--ink);
+  }
+  .sidebar-user-chev {
+    margin-left: auto;
+    flex: none;
+    color: var(--faint);
+  }
+  .sidebar:not(.expanded):not(.peek) .sidebar-user-chev {
+    display: none;
+  }
+
   /* ── App layout (main content area) ── */
   /* The full-width column beside the sidebar: .topbar spans it, .app-layout sits beneath.
      Paints the page colour, because inheriting from body was not enough — the region
@@ -10109,6 +10145,23 @@ body.hide-amounts .mask * {
   }
   .kebab-item > svg {
     flex: none;
+  }
+  .kebab-item-icon {
+    position: relative;
+    display: flex;
+    flex: none;
+  }
+  .kebab-item-kbd {
+    margin-left: auto;
+    padding-left: var(--space-4);
+    font-family: inherit;
+    font-size: var(--text-2xs);
+    color: var(--faint);
+  }
+  .kebab-sep {
+    height: 1px;
+    background: var(--line);
+    margin: var(--space-1) calc(-1 * var(--space-1));
   }
   @media (hover: hover) {
     .kebab-item:hover:not(:disabled) {

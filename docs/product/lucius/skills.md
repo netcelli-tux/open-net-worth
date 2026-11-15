@@ -28,7 +28,7 @@ himself. To run one deliberately:
 
 ## Built-in skills
 
-A new install comes with these. Find them in **Skills** in the sidebar.
+A new install comes with these. Skills isn't in the sidebar: open it with <kbd>⌘</kbd> <kbd>K</kbd> → **Skills**, or go to `/skills`.
 
 | Skill | Ask for it like |
 |---|---|

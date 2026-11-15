@@ -46,7 +46,7 @@ Every connector follows the same four steps. The provider sections below tell yo
 fetch from the provider's website and which fields to fill in.
 
 1. **Get the credential** from the provider (see your provider's section below).
-2. **Add the connector.** Open **Connectors** in the sidebar, click **Browse & add**, choose
+2. **Add the connector.** Open **Connectors** in the account menu at the bottom of the sidebar, click **Browse & add**, choose
    **Data sources**, click the provider's card, then **Add connector**. Fill in the fields and
    click **Save**.
    To come back to the form later — for example to link a bank after saving your keys — open the

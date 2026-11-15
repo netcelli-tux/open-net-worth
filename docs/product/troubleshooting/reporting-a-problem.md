@@ -27,7 +27,7 @@ closes it too.
      appears on the "Something went wrong" panel (beside **Try again** and **Reload app**), the
      "Can't reach Open Net Worth" screen, a failed restore or import, a failed AI provider
      connection test, and the desktop app's error pages.
-   - **Sidebar:** **Send feedback** (the bug icon at the bottom, below Search and Hide amounts).
+   - **Sidebar:** click your name at the bottom, then **Send feedback**.
    - **Settings → Help → Send feedback…**
    - **On a phone:** **More → Send feedback**.
    - **Desktop app:** **Help → Report a Problem…** — works on every screen, even when no book is

@@ -36,7 +36,7 @@ Copy it somewhere safe for a minute — most providers only show it once.
 
 ## 2. Add the Email connector
 
-1. Open **Connectors** in the sidebar, click **Browse & add**, choose **Data sources**, click
+1. Open **Connectors** in the account menu at the bottom of the sidebar, click **Browse & add**, choose **Data sources**, click
    **Email**, then **Add connector**.
 2. Under **Provider**, click your provider's chip — **Gmail**, **Outlook**, **iCloud** or
    **Fastmail**. That fills in all the server settings for you.

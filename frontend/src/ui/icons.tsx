@@ -25,6 +25,7 @@ export {
   ChevronsRight,
   ChevronDown,
   ChevronUp,
+  ChevronsUpDown,
   Menu,
   MoreHorizontal,
   MoreVertical,

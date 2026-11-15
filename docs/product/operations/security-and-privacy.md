@@ -118,7 +118,7 @@ anything; what he may do is decided by you, in [Permissions](../lucius/permissio
 
 ## Hiding amounts on screen
 
-Press <kbd>H</kbd>, or use **Hide amounts** in the sidebar (on a phone, in the **More** menu), to
+Press <kbd>H</kbd>, or use **Hide amounts** in the account menu at the bottom of the sidebar (on a phone, in the **More** menu), to
 replace your figures with `***` across the app, charts included — handy when sharing your screen.
 That covers your amounts, share quantities and your own percentages, such as returns, allocation
 and savings rate. The market's own numbers stay visible: share prices and their daily % changes.
