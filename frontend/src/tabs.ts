@@ -64,7 +64,10 @@ export const PRIMARY_TABS: TabId[] = [
 //
 // This array also drives the mobile "More" sheet's Manage group (MobileTabBar.tsx maps
 // over CONFIG_TABS generically), so removing it here covers both surfaces at once.
-export const CONFIG_TABS: TabId[] = ['automations', 'skills', 'connectors', 'settings']
+// 'skills' is hidden from every nav (owner, 2026-11-14) — same treatment as 'build': /skills
+// still routes, and the command palette still finds it. On desktop the rest of this list lives
+// in the sidebar's account menu (SidebarUserMenu), not the rail.
+export const CONFIG_TABS: TabId[] = ['automations', 'connectors', 'settings']
 
 export const TAB_LABELS: Record<TabId, string> = {
   lucius: 'Lucius',

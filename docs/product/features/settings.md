@@ -13,7 +13,7 @@ keywords: [settings, profile, currency, time zone, date format, appearance, them
 
 Settings is where you tell Open Net Worth about yourself (profile, income, retirement
 assumptions) and choose how this copy of the app behaves (AI provider, currency, dates, theme,
-security, backups). Open **Settings** from the sidebar, then type in the **Search** box at the top
+security, backups). Open **Settings** from the account menu at the bottom of the sidebar, then type in the **Search** box at the top
 of the section list to jump to a setting by name — "password", "backup", "time zone".
 
 On a phone the sections are a grouped list — tap one to open it, and use the back arrow to return.

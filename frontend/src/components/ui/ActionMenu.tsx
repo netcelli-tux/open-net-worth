@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useIsMobile } from '../../hooks/useIsMobile'
 import { useSheetDragToDismiss } from '../../hooks/useSheetDragToDismiss'
@@ -11,6 +11,10 @@ export interface ActionMenuItem {
   tone?: 'default' | 'danger'
   disabled?: boolean
   icon?: ReactNode
+  /** A keyboard shortcut shown at the row's end (desktop menu only). */
+  hint?: string
+  /** Draws a rule above this row, to group related actions. */
+  separatorBefore?: boolean
 }
 
 export interface ActionMenuProps {
@@ -28,6 +32,9 @@ export interface ActionMenuProps {
    *  on a dialog's bottom edge, where "below" is outside the dialog. Default: below, flipping
    *  up only when the window has no room. */
   placement?: 'auto' | 'above'
+  /** `start` lines the menu up with the trigger's left edge (a full-width sidebar row);
+   *  default `end` lines it up with the right edge (a ⋯ at a row's end). */
+  align?: 'start' | 'end'
   /** Fires whenever the menu opens/closes. The dropdown itself is portaled to `document.body`
    *  (below) — outside the trigger's own DOM subtree — so a caller that closes on its OWN
    *  `mouseleave` (e.g. a hover-triggered flyout) sees the cursor "leave" the instant it
@@ -44,10 +51,13 @@ export function ActionMenu({
   className,
   triggerClassName,
   placement = 'auto',
+  align = 'end',
   onOpenChange,
 }: ActionMenuProps) {
   const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(null)
+  const [position, setPosition] = useState<{ top: number; left: number; minWidth?: number } | null>(
+    null,
+  )
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const scrimRef = useRef<HTMLDivElement>(null)
@@ -86,8 +96,11 @@ export function ActionMenu({
       placement === 'above' || triggerBox.bottom + menuBox.height + 8 > window.innerHeight
         ? triggerBox.top - menuBox.height - 4
         : triggerBox.bottom + 4
-    setPosition({ top, left: Math.max(4, triggerBox.right - menuBox.width) })
-  }, [open, isMobile, placement])
+    const left = align === 'start' ? triggerBox.left : triggerBox.right - menuBox.width
+    // A start-aligned menu is at least as wide as its row, so it covers what it opens over.
+    const minWidth = align === 'start' ? triggerBox.width : undefined
+    setPosition({ top, left: Math.max(4, left), minWidth })
+  }, [open, isMobile, placement, align])
 
   useLayoutEffect(() => {
     if (!open || !requestedFocus.current) return
@@ -146,20 +159,23 @@ export function ActionMenu({
   }
 
   const menuItems = items.map((item) => (
-    <button
-      key={item.label}
-      type="button"
-      role="menuitem"
-      className={`${isMobile ? 'kebab-sheet-item' : 'kebab-item'}${item.tone === 'danger' ? ` ${isMobile ? 'kebab-sheet-item--danger' : 'kebab-item--danger'}` : ''}`}
-      disabled={item.disabled}
-      onClick={() => {
-        close(true)
-        item.onSelect()
-      }}
-    >
-      {item.icon}
-      {item.label}
-    </button>
+    <Fragment key={item.label}>
+      {item.separatorBefore && <div role="separator" className="kebab-sep" />}
+      <button
+        type="button"
+        role="menuitem"
+        className={`${isMobile ? 'kebab-sheet-item' : 'kebab-item'}${item.tone === 'danger' ? ` ${isMobile ? 'kebab-sheet-item--danger' : 'kebab-item--danger'}` : ''}`}
+        disabled={item.disabled}
+        onClick={() => {
+          close(true)
+          item.onSelect()
+        }}
+      >
+        {item.icon}
+        {item.label}
+        {item.hint && !isMobile && <kbd className="kebab-item-kbd">{item.hint}</kbd>}
+      </button>
+    </Fragment>
   ))
 
   const menu =

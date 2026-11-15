@@ -34,7 +34,7 @@ The paid providers charge per search at their own rates; most have a free tier t
 ## Set up a provider
 
 1. Create an account at the provider's site (links above) and copy your **API key**.
-2. In Open Net Worth, open **Connectors** in the sidebar, click **Browse & add**, choose **Web**,
+2. In Open Net Worth, open **Connectors** in the account menu at the bottom of the sidebar, click **Browse & add**, choose **Web**,
    click the provider's card, then **Add connector**.
 3. Paste the key into **API key**. (Google also needs **Search engine ID (cx)** — see below.)
 4. Click **Save**.

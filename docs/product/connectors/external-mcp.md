@@ -78,7 +78,7 @@ Coinbase first — once at the bottom of **All**, or under the section on a sing
 search or filter; click one to read about it and add it. **Sort** orders the full list below it:
 **Popular** puts popular connectors first, then the rest, each A–Z.
 
-1. Open **Connectors** in the sidebar, click **Browse & add**, and choose **MCP**.
+1. Open **Connectors** in the account menu at the bottom of the sidebar, click **Browse & add**, and choose **MCP**.
 2. Click a card to read what it does and which tools it offers, then click **Add**. The connection
    form opens with the address or command already filled in.
 3. Fill in what the server needs:
@@ -226,7 +226,7 @@ Open the server under **Connectors**:
   link the account again. While a sign-in is waiting, the page shows **Open sign-in again** and
   **Cancel**: if you closed the sign-in window or browser tab without finishing, start a fresh one
   or drop it. (The desktop app signs in through your browser, so it can't tell the tab was closed.)
-  A dot on **Connectors** in the navigation tells you a connector needs one
+  A dot on **Connectors** (and on your name at the bottom of the sidebar) tells you a connector needs one
   of these (amber if every problem is an expired sign-in), the **Attention** filter lists which
   ones, and the reason is written on its row and at the top of its page. Lucius is told too: each turn it sees which connectors have a problem, so it can say
   why a tool is missing.

@@ -13,7 +13,7 @@ keywords: [automation, scheduled task, run history, failed, needs you, paused, t
 
 ## First, look at the run history
 
-1. Click **Automations** in the sidebar (on a phone: **More → Automations**).
+1. Click **Automations** in the account menu at the bottom of the sidebar (on a phone: **More → Automations**).
 2. Open the Automation.
 3. Scroll to **History** (on a narrow screen, switch to the **History** tab). Each run shows its
    status:

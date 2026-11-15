@@ -32,7 +32,7 @@ Keep the token private — anyone who has it can control your bot.
 
 ## 2. Add the Telegram connector
 
-1. Open **Connectors** in the sidebar, click **Browse & add**, choose **Channels**, click
+1. Open **Connectors** in the account menu at the bottom of the sidebar, click **Browse & add**, choose **Channels**, click
    **Telegram**, then **Add connector**.
 2. Paste the token into **Bot token**.
 3. Under **Who can chat**, pick one:

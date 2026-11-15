@@ -20,7 +20,7 @@ bank every few hours, or logging the purchases in your card emails.
 
 ## Set one up from a template (quickest)
 
-1. Open **Automations** in the sidebar.
+1. Open **Automations** in the account menu at the bottom of the sidebar.
 2. Under **Recommended**, click a template:
 
    | Template | What it does | When |

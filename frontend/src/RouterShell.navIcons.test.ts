@@ -17,12 +17,24 @@ describe('sidebar icon contract', () => {
   })
 })
 
-describe('sidebar footer feedback item', () => {
-  it('sits beside Search and Hide amounts, with a bug icon, and opens the report dialog', () => {
+const userMenu = readFileSync(resolve(__dirname, 'components/SidebarUserMenu.tsx'), 'utf8')
+
+describe('sidebar account menu', () => {
+  it('sits in the footer beside Search and opens the report dialog for feedback', () => {
     const footer = shell.slice(shell.indexOf('className="sidebar-util"'))
-    expect(footer).toMatch(/onClick=\{\(\) => openReportProblem\(\)\}/)
-    expect(footer).toContain('<Bug size={16} strokeWidth={1.6} aria-hidden="true" />')
-    expect(footer).toContain('<span className="sidebar-label">Send feedback</span>')
-    expect(footer).toMatch(/'Send feedback',\n\s*\)\}/)
+    expect(footer).toContain('<SidebarUserMenu')
+    expect(footer).toMatch(/onFeedback=\{\(\) => openReportProblem\(\)\}/)
+  })
+
+  it('holds Hide amounts, Automations, Connectors, Settings and Send feedback — never Skills', () => {
+    for (const label of [
+      "'Hide amounts'",
+      "'Automations'",
+      "'Connectors'",
+      "'Settings'",
+      "'Send feedback'",
+    ])
+      expect(userMenu).toContain(label)
+    expect(userMenu).not.toContain('Skills')
   })
 })

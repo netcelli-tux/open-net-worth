@@ -42,7 +42,7 @@ you it's blocked and that nothing ran.
 **To unblock it:**
 
 - **An action that belongs to a connector** (sending email, syncing a bank, searching the web):
-  open **Connectors** in the sidebar, choose that connector, and in its tool list change the
+  open **Connectors** in the account menu at the bottom of the sidebar, choose that connector, and in its tool list change the
   action from **Blocked** to **Needs approval** (asks each time) or **Always allow** (never
   asks).
 - **One of Lucius's built-in actions** (transactions, categories, budget and so on): open
